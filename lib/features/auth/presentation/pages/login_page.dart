@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      label: Text("Password"),
+                      labelText: "Password",
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        context.push('forgot-password');
+                        context.pushNamed('forgot-password');
                       },
                       child: const Text('Forgot password?'),
                     ),
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       TextButton(
                         onPressed: () {
-                          context.push('register');
+                          context.pushNamed('register');
                         },
                         child: const Text('Register'),
                       ),

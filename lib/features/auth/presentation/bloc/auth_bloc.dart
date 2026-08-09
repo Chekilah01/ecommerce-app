@@ -106,25 +106,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  String _firebaseAuthError(FirebaseAuthException e) {
-    switch (e.code) {
-      case 'email-already-in-use':
-        return 'This email is already registered.';
+  String _firebaseAuthError(FirebaseAuthException e) { // tbh I tried to be specific here as much as I could 
+  switch (e.code) {
+    case 'email-already-in-use':
+      return 'This email is already registered.';
 
-      case 'weak-password':
-        return 'The password is too weak.';
+    case 'weak-password':
+      return 'The password is too weak.';
 
-      case 'wrong-password':
-        return 'Incorrect password.';
+    case 'invalid-credential':
+    case 'wrong-password':
+    case 'user-not-found':
+      return 'Invalid email or password.';
 
-      case 'user-not-found':
-        return 'No account found with this email.';
+    case 'invalid-email':
+      return 'Invalid email address.';
 
-      case 'invalid-email':
-        return 'Invalid email address.';
+    case 'user-disabled':
+      return 'This account has been disabled.';
 
-      default:
-        return 'Something went wrong.';
-    }
+    case 'too-many-requests':
+      return 'Too many attempts. Please try again later.';
+
+    case 'operation-not-allowed':
+      return 'This sign-in method is not enabled.';
+
+    case 'network-request-failed':
+      return 'Network error. Please check your internet connection.';
+
+    default:
+      return e.message ?? 'An unexpected error occurred. Please try again.';
   }
+}
 }

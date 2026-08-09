@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:final_project/features/auth/presentation/bloc/auth_event.dart';
 import 'package:final_project/features/auth/presentation/bloc/auth_state.dart';
 import 'package:final_project/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:final_project/features/auth/presentation/pages/login_page.dart';
 import 'package:final_project/features/auth/presentation/pages/register_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
@@ -35,7 +37,7 @@ class AppRouter {
       redirect: (context, state) {
         final authState = authBloc.state;
 
-        if (authState is AuthInitial || authState is AuthLoading) {
+        if (authState is AuthInitial) {
           return state.matchedLocation == '/' ? null : '/';
         }
 
@@ -89,8 +91,7 @@ class AppRouter {
         GoRoute(
           path: '/customer',
           name: 'customer',
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: Text('Customer'))),
+          builder: (context, state) => const CustomerTestPage(),
         ),
 
         GoRoute(
@@ -100,6 +101,25 @@ class AppRouter {
               const Scaffold(body: Center(child: Text('Admin'))),
         ),
       ],
+    );
+  }
+}
+
+class CustomerTestPage extends StatelessWidget {
+  const CustomerTestPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Customer')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            context.read<AuthBloc>().add(const LogoutEvent());
+          },
+          child: const Text('Logout'),
+        ),
+      ),
     );
   }
 }
