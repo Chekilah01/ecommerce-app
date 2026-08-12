@@ -40,6 +40,14 @@ dependencies:
   cloud_firestore: ^6.8.0
   flutter_bloc: ^9.1.1
   go_router: ^17.4.0
+  google_fonts: ^8.2.1
+  iconsax_flutter: ^1.0.1
+  google_nav_bar: ^5.0.7
+  cloudinary_flutter: ^1.3.0
+  cloudinary_url_gen: ^1.8.0
+  image_picker: ^1.2.3
+  cloudinary_api: ^1.1.1
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +70,10 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: MyCustomFont  # Choose any name you want to reference in code
+      fonts:
+        - asset: assets/fonts/GalaferaMedium-V4xze.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

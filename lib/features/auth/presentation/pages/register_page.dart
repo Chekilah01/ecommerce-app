@@ -87,8 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
             );
           }
 
-          // No navigation here.
-          // GoRouter handles navigation after Authenticated.
+          
         },
 
         child: SingleChildScrollView(
@@ -113,7 +112,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 32),
 
-                // FIRST NAME
+               
                 TextFormField(
                   controller: _firstNameController,
                   textCapitalization: TextCapitalization.words,
@@ -133,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 16),
 
-                // LAST NAME
+                
                 TextFormField(
                   controller: _lastNameController,
                   textCapitalization: TextCapitalization.words,
@@ -153,7 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 16),
 
-                // EMAIL
+                
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -177,7 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 16),
 
-                // PASSWORD
+                
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -213,7 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 16),
 
-                // PHONE
+              
                 TextFormField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
@@ -234,7 +233,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 16),
 
-                // WILAYA
+           
                 TextFormField(
                   controller: _wilayaController,
                   decoration: const InputDecoration(
@@ -253,7 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 16),
 
-                // COMMUNE
+                
                 TextFormField(
                   controller: _communeController,
                   decoration: const InputDecoration(
@@ -272,7 +271,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 16),
 
-                // GENDER
+                
                 DropdownButtonFormField<Gender>(
                   initialValue: _selectedGender,
                   decoration: const InputDecoration(
@@ -304,7 +303,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 24),
 
-                // REGISTER BUTTON
+               
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     final isLoading = state is AuthLoading;
