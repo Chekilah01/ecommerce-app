@@ -6,7 +6,7 @@ class ProductRemoteDataSource {
   final FirebaseFirestore _firestore;
 
   ProductRemoteDataSource({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _productsCollection =>
       _firestore.collection('products');
@@ -14,9 +14,7 @@ class ProductRemoteDataSource {
   Future<List<ProductModel>> getProducts() async {
     final snapshot = await _productsCollection.get();
 
-    return snapshot.docs
-        .map(ProductModel.fromFirestore)
-        .toList();
+    return snapshot.docs.map(ProductModel.fromFirestore).toList();
   }
 
   Future<ProductModel?> getProductById(String productId) async {
@@ -29,16 +27,12 @@ class ProductRemoteDataSource {
     return ProductModel.fromFirestore(doc);
   }
 
-  Future<List<ProductModel>> getProductsByCategory(
-    String categoryId,
-  ) async {
+  Future<List<ProductModel>> getProductsByCategory(String categoryId) async {
     final snapshot = await _productsCollection
         .where('categoryId', isEqualTo: categoryId)
         .get();
 
-    return snapshot.docs
-        .map(ProductModel.fromFirestore)
-        .toList();
+    return snapshot.docs.map(ProductModel.fromFirestore).toList();
   }
 
   Future<List<ProductModel>> getFeaturedProducts() async {
@@ -46,9 +40,7 @@ class ProductRemoteDataSource {
         .where('isFeatured', isEqualTo: true)
         .get();
 
-    return snapshot.docs
-        .map(ProductModel.fromFirestore)
-        .toList();
+    return snapshot.docs.map(ProductModel.fromFirestore).toList();
   }
 
   Future<List<ProductModel>> getPopularProducts() async {
@@ -57,26 +49,18 @@ class ProductRemoteDataSource {
         .limit(10)
         .get();
 
-    return snapshot.docs
-        .map(ProductModel.fromFirestore)
-        .toList();
+    return snapshot.docs.map(ProductModel.fromFirestore).toList();
   }
 
   Future<void> createProduct(ProductModel product) async {
-    await _productsCollection
-        .doc(product.id)
-        .set(product.toFirestore());
+    await _productsCollection.doc(product.id).set(product.toFirestore());
   }
 
   Future<void> updateProduct(ProductModel product) async {
-    await _productsCollection
-        .doc(product.id)
-        .update(product.toFirestore());
+    await _productsCollection.doc(product.id).update(product.toFirestore());
   }
 
   Future<void> deleteProduct(String productId) async {
-    await _productsCollection
-        .doc(productId)
-        .delete();
+    await _productsCollection.doc(productId).delete();
   }
 }
