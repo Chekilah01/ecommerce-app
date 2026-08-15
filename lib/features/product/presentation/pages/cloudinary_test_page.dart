@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:final_project/features/product/data/datasources/cloudinary_data_source.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -19,9 +20,7 @@ class _CloudinaryTestPageState extends State<CloudinaryTestPage> {
   String? _publicId;
 
   Future<void> _pickAndUploadImage() async {
-    final image = await _picker.pickImage(
-      source: ImageSource.gallery,
-    );
+    final image = await _picker.pickImage(source: ImageSource.gallery);
 
     if (image == null) {
       return;
@@ -40,18 +39,11 @@ class _CloudinaryTestPageState extends State<CloudinaryTestPage> {
 
       request.fields['upload_preset'] = 'ecom_app_products';
 
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'file',
-          image.path,
-        ),
-      );
+      request.files.add(await http.MultipartFile.fromPath('file', image.path));
 
       final streamedResponse = await request.send();
 
-      final response = await http.Response.fromStream(
-        streamedResponse,
-      );
+      final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -68,11 +60,7 @@ class _CloudinaryTestPageState extends State<CloudinaryTestPage> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Upload failed: ${response.body}',
-              ),
-            ),
+            SnackBar(content: Text('Upload failed: ${response.body}')),
           );
         }
       }
@@ -80,11 +68,9 @@ class _CloudinaryTestPageState extends State<CloudinaryTestPage> {
       debugPrint('Upload exception: $e');
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Upload failed: $e'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
       }
     } finally {
       if (mounted) {
@@ -98,9 +84,7 @@ class _CloudinaryTestPageState extends State<CloudinaryTestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cloudinary Test'),
-      ),
+      appBar: AppBar(title: const Text('Cloudinary Test')),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -118,20 +102,29 @@ class _CloudinaryTestPageState extends State<CloudinaryTestPage> {
               const SizedBox(height: 20),
 
               if (_publicId != null)
-                Text(
-                  'Public ID:\n$_publicId',
-                  textAlign: TextAlign.center,
-                ),
+                Text('Public ID:\n$_publicId', textAlign: TextAlign.center),
 
               const SizedBox(height: 30),
 
               ElevatedButton(
-                onPressed: _isUploading
-                    ? null
-                    : _pickAndUploadImage,
+                onPressed: _isUploading ? null : _pickAndUploadImage,
                 child: _isUploading
                     ? const CircularProgressIndicator()
                     : const Text('Pick & Upload Image'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    final dataSource = CloudinaryDataSource();
+
+                    await dataSource.deleteImage('pfp');
+
+                    debugPrint('Image deleted successfully');
+                  } catch (e) {
+                    debugPrint('Delete failed: $e');
+                  }
+                },
+                child: const Text('Delete Test Image'),
               ),
             ],
           ),

@@ -49,6 +49,9 @@ dependencies:
   cloudinary_api: ^1.1.1
   http: ^1.6.0
   cloud_functions: ^6.3.6
+  flutter_dotenv: ^6.0.1
+  crypto: ^3.0.7
+  uuid: ^4.6.0
 
 dev_dependencies:
   flutter_test:
@@ -67,15 +70,15 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - .env
+
   fonts:
-    - family: MyCustomFont  # Choose any name you want to reference in code
+    - family: MyCustomFont
       fonts:
         - asset: assets/fonts/GalaferaMedium-V4xze.ttf
-
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

@@ -3,17 +3,28 @@ import 'package:final_project/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'core/config/firebase_options.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await dotenv.load(fileName: '.env');
+
+  debugPrint(
+    'Cloudinary cloud name: ${dotenv.env['CLOUDINARY_CLOUD_NAME']}',
+  );
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthBloc()),
-        //TODO: cartBloc
+        // TODO: cartBloc
       ],
       child: const MyApp(),
     ),
@@ -46,6 +57,12 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+
+
+
+/*
+
+
 class TestWidget extends StatelessWidget {
   const TestWidget({super.key});
 
@@ -62,3 +79,5 @@ class TestWidget extends StatelessWidget {
     );
   }
 }
+
+*/
