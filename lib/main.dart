@@ -12,13 +12,9 @@ Future<void> main() async {
 
   await dotenv.load(fileName: '.env');
 
-  debugPrint(
-    'Cloudinary cloud name: ${dotenv.env['CLOUDINARY_CLOUD_NAME']}',
-  );
+  debugPrint('Cloudinary cloud name: ${dotenv.env['CLOUDINARY_CLOUD_NAME']}');
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
     MultiBlocProvider(

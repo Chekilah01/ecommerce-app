@@ -1,5 +1,11 @@
 import 'dart:async';
 
+import 'package:final_project/features/admin/presentation/pages/add_product_page.dart';
+import 'package:final_project/features/admin/presentation/pages/admin_dashboard_page.dart';
+import 'package:final_project/features/admin/presentation/pages/admin_orders_page.dart';
+import 'package:final_project/features/admin/presentation/pages/admin_products_page.dart';
+import 'package:final_project/features/admin/presentation/pages/admin_profile_page.dart';
+import 'package:final_project/features/admin/presentation/pages/admin_shell_page.dart';
 import 'package:final_project/features/auth/presentation/bloc/auth_state.dart';
 import 'package:final_project/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:final_project/features/auth/presentation/pages/login_page.dart';
@@ -10,7 +16,9 @@ import 'package:final_project/features/customer/presentation/pages/home_page.dar
 import 'package:final_project/features/customer/presentation/pages/orders_page.dart';
 import 'package:final_project/features/customer/presentation/pages/profile_page.dart';
 import 'package:final_project/features/customer/presentation/pages/search_page.dart';
+import 'package:final_project/features/product/presentation/bloc/product_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
@@ -149,11 +157,65 @@ class AppRouter {
           ],
         ),
 
-        GoRoute(
-          path: '/admin',
-          name: 'admin',
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: Text('Admin'))),
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) {
+            return BlocProvider(
+              create:(context) => ProductBloc(),
+              child: AdminShellPage(navigationShell: navigationShell),
+              );
+          },
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/admin',
+                  name: 'admin-dashboard',
+                  builder: (context, state) => const AdminDashboardPage(),
+                ),
+              ],
+            ),
+
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/admin/products',
+                  name: 'admin-products',
+                  builder: (context, state) {
+                    return const AdminProductsPage();
+                  },
+                  routes: [
+                    GoRoute(
+                      path: 'add',
+                      name: 'admin-add-product',
+                      builder: (context, state) {
+                        return const AddProductPage();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/admin/orders',
+                  name: 'admin-orders',
+                  builder: (context, state) => const AdminOrdersPage(),
+                ),
+              ],
+            ),
+
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/admin/profile',
+                  name: 'admin-profile',
+                  builder: (context, state) => const AdminProfilePage(),
+                ),
+              ],
+            ),
+          ],
         ),
       ],
     );
