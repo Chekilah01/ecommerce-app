@@ -418,7 +418,7 @@ class _EditProductPageState extends State<EditProductPage> {
       mainAxisAlignment:
           MainAxisAlignment.spaceBetween,
       children: List.generate(5, (index) {
-        // Existing Cloudinary images.
+        
         if (index < _keptAdditionalImages.length) {
           final image =
               _keptAdditionalImages[index];
@@ -429,7 +429,7 @@ class _EditProductPageState extends State<EditProductPage> {
           );
         }
 
-        // Newly selected local images.
+        
         final newImageIndex =
             index - _keptAdditionalImages.length;
 
@@ -446,7 +446,7 @@ class _EditProductPageState extends State<EditProductPage> {
           );
         }
 
-        // Empty slot.
+        
         return Expanded(
           child: Container(
             margin: EdgeInsets.only(

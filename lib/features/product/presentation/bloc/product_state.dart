@@ -6,9 +6,17 @@ enum ProductStatus { initial, loading, success, actionSuccess, failure }
 
 class ProductState extends Equatable {
   final ProductStatus status;
+
   final List<ProductEntity> allProducts;
   final List<ProductEntity> products;
   final ProductEntity? selectedProduct;
+
+  final int totalProducts;
+  final int featuredProductsCount;
+  final int lowStockProductsCount;
+  final int outOfStockProductsCount;
+  final List<ProductEntity> topSellingProducts;
+
   final String? errorMessage;
   final String? successMessage;
 
@@ -17,6 +25,13 @@ class ProductState extends Equatable {
     this.allProducts = const [],
     this.products = const [],
     this.selectedProduct,
+
+    this.totalProducts = 0,
+    this.featuredProductsCount = 0,
+    this.lowStockProductsCount = 0,
+    this.outOfStockProductsCount = 0,
+    this.topSellingProducts = const [],
+
     this.errorMessage,
     this.successMessage,
   });
@@ -26,6 +41,13 @@ class ProductState extends Equatable {
     List<ProductEntity>? allProducts,
     List<ProductEntity>? products,
     ProductEntity? selectedProduct,
+
+    int? totalProducts,
+    int? featuredProductsCount,
+    int? lowStockProductsCount,
+    int? outOfStockProductsCount,
+    List<ProductEntity>? topSellingProducts,
+
     String? errorMessage,
     String? successMessage,
     bool clearSelectedProduct = false,
@@ -34,12 +56,24 @@ class ProductState extends Equatable {
   }) {
     return ProductState(
       status: status ?? this.status,
-      allProducts: allProducts?? this.allProducts,
+      allProducts: allProducts ?? this.allProducts,
       products: products ?? this.products,
+
       selectedProduct: clearSelectedProduct
           ? null
           : selectedProduct ?? this.selectedProduct,
+
+      totalProducts: totalProducts ?? this.totalProducts,
+      featuredProductsCount:
+          featuredProductsCount ?? this.featuredProductsCount,
+      lowStockProductsCount:
+          lowStockProductsCount ?? this.lowStockProductsCount,
+      outOfStockProductsCount:
+          outOfStockProductsCount ?? this.outOfStockProductsCount,
+      topSellingProducts: topSellingProducts ?? this.topSellingProducts,
+
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
+
       successMessage: clearSuccessMessage
           ? null
           : successMessage ?? this.successMessage,
@@ -52,6 +86,13 @@ class ProductState extends Equatable {
     allProducts,
     products,
     selectedProduct,
+
+    totalProducts,
+    featuredProductsCount,
+    lowStockProductsCount,
+    outOfStockProductsCount,
+    topSellingProducts,
+
     errorMessage,
     successMessage,
   ];

@@ -118,3 +118,7 @@ class DeleteProduct extends ProductEvent {
   @override
   List<Object?> get props => [product];
 }
+
+class LoadDashboardData extends ProductEvent{
+  const LoadDashboardData();
+}
