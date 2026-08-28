@@ -6,6 +6,7 @@ import 'package:final_project/features/admin/presentation/pages/admin_orders_pag
 import 'package:final_project/features/admin/presentation/pages/admin_products_page.dart';
 import 'package:final_project/features/admin/presentation/pages/admin_profile_page.dart';
 import 'package:final_project/features/admin/presentation/pages/admin_shell_page.dart';
+import 'package:final_project/features/admin/presentation/pages/edit_product_page.dart';
 import 'package:final_project/features/auth/presentation/bloc/auth_state.dart';
 import 'package:final_project/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:final_project/features/auth/presentation/pages/login_page.dart';
@@ -16,6 +17,7 @@ import 'package:final_project/features/customer/presentation/pages/home_page.dar
 import 'package:final_project/features/customer/presentation/pages/orders_page.dart';
 import 'package:final_project/features/customer/presentation/pages/profile_page.dart';
 import 'package:final_project/features/customer/presentation/pages/search_page.dart';
+import 'package:final_project/features/product/domain/entities/product_entity.dart';
 import 'package:final_project/features/product/presentation/bloc/product_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -160,9 +162,9 @@ class AppRouter {
         StatefulShellRoute.indexedStack(
           builder: (context, state, navigationShell) {
             return BlocProvider(
-              create:(context) => ProductBloc(),
+              create: (context) => ProductBloc(),
               child: AdminShellPage(navigationShell: navigationShell),
-              );
+            );
           },
           branches: [
             StatefulShellBranch(
@@ -189,6 +191,15 @@ class AppRouter {
                       name: 'admin-add-product',
                       builder: (context, state) {
                         return const AddProductPage();
+                      },
+                    ),
+                    GoRoute(
+                      path: 'edit',
+                      name: 'admin-edit-product',
+                      builder: (context, state) {
+                        final product = state.extra as ProductEntity;
+
+                        return EditProductPage(product: product);
                       },
                     ),
                   ],

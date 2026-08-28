@@ -24,6 +24,7 @@ class AdminShellPage extends StatelessWidget {
     final inactiveColor = theme.colorScheme.onSurfaceVariant;
 
     return Scaffold(
+      extendBody: true,
       body: navigationShell,
       bottomNavigationBar: SafeArea(
         child: Container(

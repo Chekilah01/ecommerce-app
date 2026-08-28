@@ -8,9 +8,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final ProductRepository _productRepository;
 
   ProductBloc({ProductRepository? productRepository})
-      : _productRepository =
-            productRepository ?? ProductRepository(),
-        super(const ProductState()) {
+    : _productRepository = productRepository ?? ProductRepository(),
+      super(const ProductState()) {
     on<LoadProducts>(_onLoadProducts);
     on<LoadProductById>(_onLoadProductById);
     on<LoadProductsByCategory>(_onLoadProductsByCategory);
@@ -40,6 +39,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(
         state.copyWith(
           status: ProductStatus.success,
+          allProducts: products,
           products: products,
         ),
       );
@@ -67,9 +67,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     );
 
     try {
-      final product = await _productRepository.getProductById(
-        event.productId,
-      );
+      final product = await _productRepository.getProductById(event.productId);
 
       if (product == null) {
         emit(
@@ -82,10 +80,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
 
       emit(
-        state.copyWith(
-          status: ProductStatus.success,
-          selectedProduct: product,
-        ),
+        state.copyWith(status: ProductStatus.success, selectedProduct: product),
       );
     } catch (e) {
       emit(
@@ -110,17 +105,11 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     );
 
     try {
-      final products =
-          await _productRepository.getProductsByCategory(
+      final products = await _productRepository.getProductsByCategory(
         event.categoryId,
       );
 
-      emit(
-        state.copyWith(
-          status: ProductStatus.success,
-          products: products,
-        ),
-      );
+      emit(state.copyWith(status: ProductStatus.success, products: products));
     } catch (e) {
       emit(
         state.copyWith(
@@ -144,15 +133,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     );
 
     try {
-      final products =
-          await _productRepository.getFeaturedProducts();
+      final products = await _productRepository.getFeaturedProducts();
 
-      emit(
-        state.copyWith(
-          status: ProductStatus.success,
-          products: products,
-        ),
-      );
+      emit(state.copyWith(status: ProductStatus.success, products: products));
     } catch (e) {
       emit(
         state.copyWith(
@@ -176,15 +159,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     );
 
     try {
-      final products =
-          await _productRepository.getPopularProducts();
+      final products = await _productRepository.getPopularProducts();
 
-      emit(
-        state.copyWith(
-          status: ProductStatus.success,
-          products: products,
-        ),
-      );
+      emit(state.copyWith(status: ProductStatus.success, products: products));
     } catch (e) {
       emit(
         state.copyWith(
@@ -199,34 +176,29 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     SearchProducts event,
     Emitter<ProductState> emit,
   ) async {
+    final normalizedQuery = event.query.trim().toLowerCase();
+    final normalizedCategory = event.categoryId.trim().toLowerCase();
+
+    final filteredProducts = state.allProducts.where((product) {
+      final matchesCategory =
+          normalizedCategory == 'all' ||
+          product.categoryId.toLowerCase() == normalizedCategory;
+
+      final matchesQuery =
+          normalizedQuery.isEmpty ||
+          product.name.toLowerCase().contains(normalizedQuery);
+
+      return matchesCategory && matchesQuery;
+    }).toList();
+
     emit(
       state.copyWith(
-        status: ProductStatus.loading,
+        status: ProductStatus.success,
+        products: filteredProducts,
         clearError: true,
         clearSuccessMessage: true,
       ),
     );
-
-    try {
-      final products = await _productRepository.searchProducts(
-        query: event.query,
-        categoryId: event.categoryId,
-      );
-
-      emit(
-        state.copyWith(
-          status: ProductStatus.success,
-          products: products,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: ProductStatus.failure,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
   }
 
   Future<void> _onCreateProduct(
@@ -254,9 +226,13 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         isFeatured: event.isFeatured,
       );
 
+      final products = await _productRepository.getProducts();
+
       emit(
         state.copyWith(
           status: ProductStatus.actionSuccess,
+          allProducts: products,
+          products: products,
           successMessage: 'Product created successfully.',
         ),
       );
@@ -290,12 +266,17 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         newAdditionalImages: event.newAdditionalImages,
       );
 
+      final products = await _productRepository.getProducts();
+
       emit(
         state.copyWith(
           status: ProductStatus.actionSuccess,
+          allProducts: products,
+          products: products,
           successMessage: 'Product updated successfully.',
         ),
       );
+
     } catch (e) {
       emit(
         state.copyWith(
@@ -321,15 +302,18 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       await _productRepository.deleteProduct(event.product);
 
+      final updatedAllProducts = state.allProducts
+          .where((product) => product.id != event.product.id)
+          .toList(); 
+
       final updatedProducts = state.products
-          .where(
-            (product) => product.id != event.product.id,
-          )
+          .where((product) => product.id != event.product.id)
           .toList();
 
       emit(
         state.copyWith(
           status: ProductStatus.actionSuccess,
+          allProducts: updatedAllProducts,
           products: updatedProducts,
           successMessage: 'Product deleted successfully.',
           clearSelectedProduct: true,

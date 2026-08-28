@@ -387,6 +387,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     );
                   },
                 ),
+                SizedBox(height: 90,),
               ],
             ),
           ),
