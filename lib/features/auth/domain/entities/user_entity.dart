@@ -12,6 +12,7 @@ class UserEntity extends Equatable {
   final String commune;
   final Gender gender;
   final String? imageUrl;
+  final String? imagePublicId;
   final String role;
 
   const UserEntity({
@@ -24,6 +25,7 @@ class UserEntity extends Equatable {
     required this.commune,
     required this.gender,
     required this.imageUrl,
+    required this.imagePublicId,
     required this.role ,
   });
 
@@ -38,6 +40,7 @@ class UserEntity extends Equatable {
     commune,
     gender,
     imageUrl,
+    imagePublicId,
     role,
   ];
 }

@@ -1,3 +1,5 @@
+import 'package:final_project/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:final_project/features/auth/presentation/bloc/auth_state.dart';
 import 'package:final_project/features/product/domain/entities/product_entity.dart';
 import 'package:final_project/features/product/presentation/bloc/product_bloc.dart';
 import 'package:final_project/features/product/presentation/bloc/product_event.dart';
@@ -40,9 +42,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         builder: (context, state) {
           if (state.status == ProductStatus.loading &&
               state.totalProducts == 0) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state.status == ProductStatus.failure &&
@@ -70,7 +70,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   ),
                   const SizedBox(height: 16),
                   _buildTopSellingProducts(state.topSellingProducts),
-                  const SizedBox(height: 32),
                 ],
               ),
             ),
@@ -81,37 +80,61 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   }
 
   Widget _buildHeaderSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final authState = context.watch<AuthBloc>().state;
+
+    String username = 'User';
+
+    if (authState is Authenticated) {
+      username = authState.user.firstName;
+    }
+
+    return Row(
       children: [
-        Text(
-          'Store Overview',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.5,
+        //TODO : don't forget to put a real Image (IF ELSE)
+        const CircleAvatar(radius: 28, backgroundImage: AssetImage('assets/images/default_profile_picture.jpg')),
+
+        const SizedBox(width: 14),
+
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${_getGreeting()}, $username 👋',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5,
+                ),
               ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Here is what\'s happening with your inventory today.',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 15,
+
+              const SizedBox(height: 4),
+
+              Text(
+                'Here is what\'s happening with your store today.',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 15,
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSectionHeader({required String title, required String subtitle}) {
+  Widget _buildSectionHeader({
+    required String title,
+    required String subtitle,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
         Text(
@@ -175,17 +198,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.08),
+            color: color.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: color.withOpacity(0.1), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.1), width: 1.5),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -199,7 +222,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
+                  color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, size: 24, color: color),
@@ -212,17 +235,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               Text(
                 value,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w900,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                  fontWeight: FontWeight.w900,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -263,7 +286,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -275,17 +298,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         itemCount: products.length,
         separatorBuilder: (_, _) => Divider(
           height: 1,
-          thickness: 1,
-          color: Colors.grey.withOpacity(0.1),
+          thickness: 2,
+          color: Colors.grey.withValues(alpha: 0.1),
           indent: 20,
           endIndent: 20,
         ),
         itemBuilder: (context, index) {
           final product = products[index];
-          return _buildTopProductTile(
-            product: product,
-            rank: index + 1,
-          );
+          return _buildTopProductTile(product: product, rank: index + 1);
         },
       ),
     );
@@ -378,7 +398,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.secondaryContainer.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -423,7 +445,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       height: 36,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: rank <= 3 ? medalColor.withOpacity(0.15) : medalColor,
+        color: rank <= 3 ? medalColor.withValues(alpha: 0.15) : medalColor,
         shape: BoxShape.circle,
       ),
       child: medalIcon != null
@@ -468,16 +490,23 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: Colors.red.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.error_rounded, size: 48, color: Colors.red),
+                      child: const Icon(
+                        Icons.error_rounded,
+                        size: 48,
+                        color: Colors.red,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     Text(
                       message,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     FilledButton.icon(
@@ -494,4 +523,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       ),
     );
   }
+  String _getGreeting() {
+  final hour = DateTime.now().hour;
+
+  if (hour < 12) {
+    return 'Good morning';
+  }
+
+  if (hour < 17) {
+    return 'Good afternoon';
+  }
+
+  return 'Good evening';
+}
 }

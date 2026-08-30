@@ -1,13 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:final_project/features/auth/data/models/user_model.dart';
 import 'package:final_project/features/auth/domain/entities/gender.dart';
+import 'package:final_project/features/auth/domain/entities/user_entity.dart';
+import 'package:final_project/features/product/data/datasources/cloudinary_data_source.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AuthRemoteDatasource {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference<Map<String, dynamic>> _usersRef = FirebaseFirestore
       .instance
       .collection("users");
+      //here i know that this import is architecturally not ideal because the Auth feature is now importing a data source from the Product feature but I did that to not change the architechture jst for one thing (which is the profile picture)
+  final CloudinaryDataSource _cloudinaryDataSource = CloudinaryDataSource();
 
   User? get currentUser => _auth.currentUser;
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -39,6 +44,7 @@ class AuthRemoteDatasource {
       commune: commune,
       gender: gender,
       imageUrl: null,
+      imagePublicId: null,
       role: 'customer',
     );
 
@@ -86,5 +92,45 @@ class AuthRemoteDatasource {
 
   Future<void> resetPassword(String email) async {
     await _auth.sendPasswordResetEmail(email: email);
+  }
+
+  Future<UserModel> updateProfileImage({
+    required UserEntity user,
+    required XFile image,
+  }) async {
+    final uploadResult = await _cloudinaryDataSource.uploadImage(image);
+
+    try {
+      await _usersRef.doc(user.uid).update({
+        'imageUrl': uploadResult.url,
+        'imagePublicId': uploadResult.publicId,
+      });
+
+      if (user.imagePublicId != null && user.imagePublicId!.isNotEmpty) {
+        try {
+          await _cloudinaryDataSource.deleteImage(user.imagePublicId!);
+        } catch (_) {}
+      }
+
+      return UserModel(
+        uid: user.uid,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        wilaya: user.wilaya,
+        commune: user.commune,
+        gender: user.gender,
+        imageUrl: uploadResult.url,
+        imagePublicId: uploadResult.publicId,
+        role: user.role,
+      );
+    } catch (e) {
+      try {
+        await _cloudinaryDataSource.deleteImage(uploadResult.publicId);
+      } catch (_) {}
+
+      rethrow;
+    }
   }
 }

@@ -12,6 +12,7 @@ class UserModel extends Equatable {
   final String commune;
   final Gender gender;
   final String? imageUrl;
+  final String? imagePublicId;
   final String role;
 
   const UserModel({
@@ -24,6 +25,7 @@ class UserModel extends Equatable {
     required this.commune,
     required this.gender,
     required this.imageUrl,
+    required this.imagePublicId,
     required this.role,
   });
 
@@ -38,6 +40,7 @@ class UserModel extends Equatable {
       commune: data['commune'],
       gender: Gender.values.firstWhere((g) => g.name == data['gender']),
       imageUrl: data['imageUrl'],
+      imagePublicId: data['imagePublicId'],
       role: data['role'],
     );
   }
@@ -52,6 +55,7 @@ class UserModel extends Equatable {
       'commune': commune,
       'gender': gender.name,
       'imageUrl': imageUrl,
+      'imagePublicId' : imagePublicId,
       'role': role,
     };
   }
@@ -67,6 +71,7 @@ class UserModel extends Equatable {
       commune: commune,
       gender: gender,
       imageUrl: imageUrl,
+      imagePublicId: imagePublicId,
       role: role,
     );
   }
@@ -82,6 +87,7 @@ class UserModel extends Equatable {
       commune: entity.commune,
       gender: entity.gender,
       imageUrl: entity.imageUrl,
+      imagePublicId: entity.imagePublicId,
       role: entity.role,
     );
   }
@@ -97,6 +103,7 @@ class UserModel extends Equatable {
     commune,
     gender,
     imageUrl,
+    imagePublicId,
     role,
   ];
 }

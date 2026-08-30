@@ -54,6 +54,7 @@ dependencies:
   uuid: ^4.6.0
   dotted_border: ^3.1.0
   shimmer: ^4.0.0
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +77,9 @@ flutter:
 
   assets:
     - .env
+    - assets/images/default_profile_picture.jpg
+    - assets/icons/no_products.svg
+    - assets/icons/add_image.svg
 
   fonts:
     - family: MyCustomFont

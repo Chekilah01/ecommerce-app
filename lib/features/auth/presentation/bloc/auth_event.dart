@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:final_project/features/auth/domain/entities/gender.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class AuthEvent extends Equatable {
   const AuthEvent();
@@ -67,4 +68,13 @@ class ResetPasswordEvent extends AuthEvent {
 
 class CheckAuthStatusEvent extends AuthEvent {
   const CheckAuthStatusEvent();
+}
+
+class UpdateProfileImageEvent extends AuthEvent {
+  final XFile image;
+
+  const UpdateProfileImageEvent(this.image);
+
+  @override
+  List<Object?> get props => [image];
 }

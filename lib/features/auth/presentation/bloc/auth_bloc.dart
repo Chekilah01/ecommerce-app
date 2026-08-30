@@ -17,6 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutEvent>(_onLogout);
     on<ResetPasswordEvent>(_onResetPassword);
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
+    on<UpdateProfileImageEvent>(_onUpdateProfileImage);
   }
 
   Future<void> _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {
@@ -138,4 +139,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return e.message ?? 'An unexpected error occurred. Please try again.';
   }
 }
+
+  Future<void> _onUpdateProfileImage(
+  UpdateProfileImageEvent event,
+  Emitter<AuthState> emit,
+) async {
+  final currentState = state;
+
+  if (currentState is! Authenticated) {
+    return;
+  }
+
+  emit(const AuthLoading());
+
+  try {
+    final updatedUser = await _repository.updateProfileImage(
+      user: currentState.user,
+      image: event.image,
+    );
+
+    emit(Authenticated(updatedUser));
+  } on FirebaseAuthException catch (e) {
+    emit(AuthError(_firebaseAuthError(e)));
+  } catch (e) {
+    emit(AuthError(e.toString()));
+  }
+}
+
 }

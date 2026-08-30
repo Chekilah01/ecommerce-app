@@ -1,3 +1,4 @@
+import 'package:final_project/core/config/app_mode_settings.dart';
 import 'package:final_project/core/config/app_router.dart';
 import 'package:final_project/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
@@ -46,9 +47,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: _router,
+    return ValueListenableBuilder(
+      valueListenable: themeNotifier,
+      builder: (context, value, child) {
+        return MaterialApp.router(
+        themeMode: value,
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        debugShowCheckedModeBanner: false,
+        routerConfig: _router,
+      );
+      },
     );
   }
 }

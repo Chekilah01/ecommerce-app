@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:final_project/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:final_project/features/auth/domain/entities/gender.dart';
 import 'package:final_project/features/auth/domain/entities/user_entity.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AuthRepository {
   final AuthRemoteDatasource _authRemoteDatasource;
@@ -50,7 +51,6 @@ class AuthRepository {
   }
 
   Future<UserEntity?> getCurrentUser() async {
-
     final user = await _authRemoteDatasource.getCurrentUser();
 
     return user?.toEntity();
@@ -62,5 +62,17 @@ class AuthRepository {
 
   Future<void> resetPassword(String email) async {
     await _authRemoteDatasource.resetPassword(email);
+  }
+
+  Future<UserEntity> updateProfileImage({
+    required UserEntity user,
+    required XFile image,
+  }) async {
+    final updatedUser = await _authRemoteDatasource.updateProfileImage(
+      user: user,
+      image: image,
+    );
+
+    return updatedUser.toEntity();
   }
 }
