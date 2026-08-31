@@ -7,6 +7,7 @@ import 'package:final_project/features/admin/presentation/pages/admin_products_p
 import 'package:final_project/features/admin/presentation/pages/admin_profile_page.dart';
 import 'package:final_project/features/admin/presentation/pages/admin_shell_page.dart';
 import 'package:final_project/features/admin/presentation/pages/edit_product_page.dart';
+import 'package:final_project/features/admin/presentation/pages/edit_profile_page.dart';
 import 'package:final_project/features/auth/presentation/bloc/auth_state.dart';
 import 'package:final_project/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:final_project/features/auth/presentation/pages/login_page.dart';
@@ -223,6 +224,13 @@ class AppRouter {
                   path: '/admin/profile',
                   name: 'admin-profile',
                   builder: (context, state) => const AdminProfilePage(),
+                  routes: [
+                    GoRoute(
+                      path: 'edit',
+                      name: 'admin-edit-profile',
+                      builder: (context, state) => const EditProfilePage(),
+                    ),
+                  ],
                 ),
               ],
             ),

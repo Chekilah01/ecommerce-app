@@ -6,6 +6,8 @@ import 'package:final_project/features/auth/presentation/bloc/auth_state.dart';
 import 'package:final_project/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -103,9 +105,8 @@ class AdminProfilePage extends StatelessWidget {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            //TODO: removed for testing
+            //ScaffoldMessenger.of(context,).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -114,37 +115,85 @@ class AdminProfilePage extends StatelessWidget {
           }
 
           if (state is! Authenticated) {
-            return const Center(child: Text('Unable to load profile.'));
+            return RefreshIndicator(
+              onRefresh: () async {
+                final authBloc = context.read<AuthBloc>();
+
+                authBloc.add(const CheckAuthStatusEvent());
+
+                await authBloc.stream.firstWhere(
+                  (state) =>
+                      state is Authenticated ||
+                      state is AuthError ||
+                      state is Unauthenticated,
+                );
+              },
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/no_network.svg',
+                            height: 100,
+                            width: 100,
+                          ),
+                          SizedBox(height: 4),
+                          Text('Check your internet connection'),
+                          SizedBox(height: 2),
+                          Text('please refresh the page'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
           }
 
           final user = state.user;
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                const SizedBox(height: 16),
+          return RefreshIndicator(
+            onRefresh: () async {
+              final authBloc = context.read<AuthBloc>();
+              authBloc.add(const CheckAuthStatusEvent());
+              await authBloc.stream.firstWhere(
+                (state) =>
+                    state is Authenticated ||
+                    state is AuthError ||
+                    state is Unauthenticated,
+              );
+            },
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
 
-                _buildProfileHeader(context, user),
+                  _buildProfileHeader(context, user),
 
-                const SizedBox(height: 32),
+                  const SizedBox(height: 32),
 
-                _buildAccountInformationCard(context, user),
+                  _buildAccountInformationCard(context, user),
 
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                _buildLocationCard(context, user),
+                  _buildLocationCard(context, user),
 
-                const SizedBox(height: 24,),
+                  const SizedBox(height: 24),
 
-                _buildEditProfileButton(context),
+                  _buildEditProfileButton(context),
 
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                _buildLogoutButton(context),
+                  _buildLogoutButton(context),
 
-                const SizedBox(height: 80),
-              ],
+                  const SizedBox(height: 80),
+                ],
+              ),
             ),
           );
         },
@@ -408,7 +457,7 @@ class AdminProfilePage extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton.icon(
         onPressed: () {
-          // TODO: Navigate to Edit Profile screen or open modal
+          context.pushNamed('admin-edit-profile');
         },
         icon: const Icon(Icons.edit),
         label: const Text('Edit Profile'),

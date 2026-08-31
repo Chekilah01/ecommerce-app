@@ -11,7 +11,7 @@ class AuthRemoteDatasource {
   final CollectionReference<Map<String, dynamic>> _usersRef = FirebaseFirestore
       .instance
       .collection("users");
-      //here i know that this import is architecturally not ideal because the Auth feature is now importing a data source from the Product feature but I did that to not change the architechture jst for one thing (which is the profile picture)
+  //here i know that this import is architecturally not ideal because the Auth feature is now importing a data source from the Product feature but I did that to not change the architechture jst for one thing (which is the profile picture)
   final CloudinaryDataSource _cloudinaryDataSource = CloudinaryDataSource();
 
   User? get currentUser => _auth.currentUser;
@@ -132,5 +132,41 @@ class AuthRemoteDatasource {
 
       rethrow;
     }
+  }
+
+  Future<UserModel> updateProfile({
+    required UserEntity user,
+    required String firstName,
+    required String lastName,
+    required String phone,
+    required String wilaya,
+    required String commune,
+    required Gender gender,
+  }) async {
+    await _usersRef
+        .doc(user.uid)
+        .update({
+          'firstName': firstName,
+          'lastName': lastName,
+          'phone': phone,
+          'wilaya': wilaya,
+          'commune': commune,
+          'gender': gender.name,
+        })
+        .timeout(const Duration(seconds: 10));
+
+    return UserModel(
+      uid: user.uid,
+      firstName: firstName,
+      lastName: lastName,
+      email: user.email,
+      phone: phone,
+      wilaya: wilaya,
+      commune: commune,
+      gender: gender,
+      imageUrl: user.imageUrl,
+      imagePublicId: user.imagePublicId,
+      role: user.role,
+    );
   }
 }

@@ -78,3 +78,31 @@ class UpdateProfileImageEvent extends AuthEvent {
   @override
   List<Object?> get props => [image];
 }
+
+class UpdateProfileEvent extends AuthEvent {
+  final String firstName;
+  final String lastName;
+  final String phone;
+  final String wilaya;
+  final String commune;
+  final Gender gender;
+
+  const UpdateProfileEvent({
+    required this.firstName,
+    required this.lastName,
+    required this.phone,
+    required this.wilaya,
+    required this.commune,
+    required this.gender,
+  });
+
+  @override
+  List<Object?> get props => [
+    firstName,
+    lastName,
+    phone,
+    wilaya,
+    commune,
+    gender,
+  ];
+}

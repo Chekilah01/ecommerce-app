@@ -80,6 +80,7 @@ flutter:
     - assets/images/default_profile_picture.jpg
     - assets/icons/no_products.svg
     - assets/icons/add_image.svg
+    - assets/icons/no_network.svg
 
   fonts:
     - family: MyCustomFont

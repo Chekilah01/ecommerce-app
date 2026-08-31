@@ -75,4 +75,26 @@ class AuthRepository {
 
     return updatedUser.toEntity();
   }
+
+  Future<UserEntity> updateProfile({
+    required UserEntity user,
+    required String firstName,
+    required String lastName,
+    required String phone,
+    required String wilaya,
+    required String commune,
+    required Gender gender,
+  }) async {
+    final updatedUser = await _authRemoteDatasource.updateProfile(
+      user: user,
+      firstName: firstName,
+      lastName: lastName,
+      phone: phone,
+      wilaya: wilaya,
+      commune: commune,
+      gender: gender,
+    );
+
+    return updatedUser.toEntity();
+  }
 }

@@ -6,6 +6,7 @@ import 'package:final_project/features/product/presentation/bloc/product_event.d
 import 'package:final_project/features/product/presentation/bloc/product_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -83,15 +84,22 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     final authState = context.watch<AuthBloc>().state;
 
     String username = 'User';
+    ImageProvider profileImage = AssetImage(
+      'assets/images/default_profile_picture.jpg',
+    );
 
     if (authState is Authenticated) {
       username = authState.user.firstName;
+
+      if (authState.user.imageUrl != null &&
+          authState.user.imageUrl!.isNotEmpty) {
+        profileImage = NetworkImage(authState.user.imageUrl!);
+      }
     }
 
     return Row(
       children: [
-        //TODO : don't forget to put a real Image (IF ELSE)
-        const CircleAvatar(radius: 28, backgroundImage: AssetImage('assets/images/default_profile_picture.jpg')),
+        CircleAvatar(radius: 28, backgroundImage: profileImage),
 
         const SizedBox(width: 14),
 
@@ -330,15 +338,16 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               fit: BoxFit.cover,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
-                return Container(
-                  width: 64,
-                  height: 64,
-                  color: Colors.grey.shade100,
-                  child: const Center(
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey.shade300,
+                  highlightColor: Colors.grey.shade100,
+                  period: const Duration(milliseconds: 1500),
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 );
@@ -523,17 +532,18 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       ),
     );
   }
+
   String _getGreeting() {
-  final hour = DateTime.now().hour;
+    final hour = DateTime.now().hour;
 
-  if (hour < 12) {
-    return 'Good morning';
+    if (hour < 12) {
+      return 'Good morning';
+    }
+
+    if (hour < 17) {
+      return 'Good afternoon';
+    }
+
+    return 'Good evening';
   }
-
-  if (hour < 17) {
-    return 'Good afternoon';
-  }
-
-  return 'Good evening';
-}
 }

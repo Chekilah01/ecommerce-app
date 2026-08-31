@@ -18,6 +18,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ResetPasswordEvent>(_onResetPassword);
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
     on<UpdateProfileImageEvent>(_onUpdateProfileImage);
+    on<UpdateProfileEvent>(_onUpdateProfile);
   }
 
   Future<void> _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {
@@ -107,63 +108,99 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  String _firebaseAuthError(FirebaseAuthException e) { // tbh I tried to be specific here as much as I could 
-  switch (e.code) {
-    case 'email-already-in-use':
-      return 'This email is already registered.';
+  String _firebaseAuthError(FirebaseAuthException e) {
+    // tbh I tried to be specific here as much as I could
+    switch (e.code) {
+      case 'email-already-in-use':
+        return 'This email is already registered.';
 
-    case 'weak-password':
-      return 'The password is too weak.';
+      case 'weak-password':
+        return 'The password is too weak.';
 
-    case 'invalid-credential':
-    case 'wrong-password':
-    case 'user-not-found':
-      return 'Invalid email or password.';
+      case 'invalid-credential':
+      case 'wrong-password':
+      case 'user-not-found':
+        return 'Invalid email or password.';
 
-    case 'invalid-email':
-      return 'Invalid email address.';
+      case 'invalid-email':
+        return 'Invalid email address.';
 
-    case 'user-disabled':
-      return 'This account has been disabled.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
 
-    case 'too-many-requests':
-      return 'Too many attempts. Please try again later.';
+      case 'too-many-requests':
+        return 'Too many attempts. Please try again later.';
 
-    case 'operation-not-allowed':
-      return 'This sign-in method is not enabled.';
+      case 'operation-not-allowed':
+        return 'This sign-in method is not enabled.';
 
-    case 'network-request-failed':
-      return 'Network error. Please check your internet connection.';
+      case 'network-request-failed':
+        return 'Network error. Please check your internet connection.';
 
-    default:
-      return e.message ?? 'An unexpected error occurred. Please try again.';
+      default:
+        return e.message ?? 'An unexpected error occurred. Please try again.';
+    }
   }
-}
 
   Future<void> _onUpdateProfileImage(
-  UpdateProfileImageEvent event,
-  Emitter<AuthState> emit,
-) async {
-  final currentState = state;
+    UpdateProfileImageEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    final currentState = state;
 
-  if (currentState is! Authenticated) {
-    return;
+    if (currentState is! Authenticated) {
+      return;
+    }
+
+    emit(const AuthLoading());
+
+    try {
+      final updatedUser = await _repository.updateProfileImage(
+        user: currentState.user,
+        image: event.image,
+      );
+
+      emit(Authenticated(updatedUser));
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(_firebaseAuthError(e)));
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
   }
 
-  emit(const AuthLoading());
+  Future<void> _onUpdateProfile(
+    UpdateProfileEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    final currentState = state;
 
-  try {
-    final updatedUser = await _repository.updateProfileImage(
-      user: currentState.user,
-      image: event.image,
-    );
+    if (currentState is! Authenticated) {
+      return;
+    }
 
-    emit(Authenticated(updatedUser));
-  } on FirebaseAuthException catch (e) {
-    emit(AuthError(_firebaseAuthError(e)));
-  } catch (e) {
-    emit(AuthError(e.toString()));
+    emit(const AuthLoading());
+
+    try {
+      final updatedUser = await _repository.updateProfile(
+        user: currentState.user,
+        firstName: event.firstName,
+        lastName: event.lastName,
+        phone: event.phone,
+        wilaya: event.wilaya,
+        commune: event.commune,
+        gender: event.gender,
+      );
+
+      emit(Authenticated(updatedUser));
+    }on TimeoutException{
+      emit(
+        const AuthError('Please check your internet connection and try again')
+      );
+
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(_firebaseAuthError(e)));
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
   }
-}
-
 }
