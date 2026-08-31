@@ -105,7 +105,10 @@ class AppRouter {
         ),
         StatefulShellRoute.indexedStack(
           builder: (context, state, navigationShell) {
-            return CustomerShellPage(navigationShell: navigationShell);
+            return BlocProvider(
+              create: (context) => ProductBloc(),
+              child: CustomerShellPage(navigationShell: navigationShell),
+              );
           },
           branches: [
             StatefulShellBranch(
@@ -123,7 +126,7 @@ class AppRouter {
                 GoRoute(
                   path: '/customer/search',
                   name: 'customer-search',
-                  builder: (context, state) => const SearchPage(),
+                  builder: (context, state) => const CustomerSearchPage(),
                 ),
               ],
             ),

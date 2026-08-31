@@ -23,11 +23,11 @@ class CustomerShellPage extends StatelessWidget {
     final theme = Theme.of(context);
     final currentIndex = navigationShell.currentIndex;
 
-    // Use theme colors for adaptive light/dark mode support
     final activeColor = theme.colorScheme.onSurface;
     final inactiveColor = theme.colorScheme.onSurfaceVariant;
 
     return Scaffold(
+      extendBody: true,
       body: navigationShell,
       bottomNavigationBar: SafeArea(
         child: Container(
