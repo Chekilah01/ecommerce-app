@@ -61,11 +61,14 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
                   });
                 },
                 itemBuilder: (context, index) {
-                  return Image.network(
-                    imagesList[index],
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const Center(
-                      child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                  return GestureDetector(
+                    onTap: () => _showFullScreenImage(context , imagesList[index]),
+                    child: Image.network(
+                      imagesList[index],
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Center(
+                        child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                      ),
                     ),
                   );
                 },
@@ -118,5 +121,33 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
         ),
       ),
     );
+  }
+
+  void _showFullScreenImage(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: AppColors.black,
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 4.0,
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.broken_image,
+                    size: 80,
+                    color: Colors.white54,
+                    ),
+                ),
+                ),
+            )
+          ],
+        ),
+      ),
+      );
   }
 }
