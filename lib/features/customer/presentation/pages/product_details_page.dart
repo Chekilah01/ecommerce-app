@@ -1,3 +1,4 @@
+import 'package:final_project/features/customer/presentation/widgets/detailsWidget/delevery_fee_widget.dart';
 import 'package:final_project/features/customer/presentation/widgets/detailsWidget/price_widget.dart';
 import 'package:final_project/features/customer/presentation/widgets/detailsWidget/product_description.dart';
 import 'package:final_project/features/customer/presentation/widgets/detailsWidget/product_image_slider.dart';
@@ -64,6 +65,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   ProductTitle(widget: widget),
                   RatingWidget(widget: widget),
                   ProductPrice(widget: widget),
+                  ProductDeleveryFee(isDarkMode: isDarkMode, widget: widget),
                   ProductDescription(widget: widget),
                   const ReviewsPage(),
                 ],
