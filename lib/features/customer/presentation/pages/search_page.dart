@@ -4,6 +4,7 @@ import 'package:final_project/features/product/presentation/bloc/product_event.d
 import 'package:final_project/features/product/presentation/bloc/product_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CustomerSearchPage extends StatefulWidget {
@@ -66,21 +67,12 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
     });
 
     context.read<ProductBloc>().add(
-      SearchProducts(
-        query: _searchController.text,
-        categoryId: categoryId,
-      ),
+      SearchProducts(query: _searchController.text, categoryId: categoryId),
     );
   }
 
   void _openProductDetails(ProductEntity product) {
-    // TODO: Add the Product Details route when that page is created.
-    //
-    // Example:
-    // context.pushNamed(
-    //   'customer-product-details',
-    //   extra: product,
-    // );
+    context.pushNamed('customer-product-details', extra: product);
   }
 
   String _formatCategory(String categoryId) {
@@ -123,10 +115,8 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
           }
         },
         child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Search'),
-            centerTitle: true,
-          ),
+          extendBody: true,
+          appBar: AppBar(title: const Text('Search'), centerTitle: true),
 
           body: Column(
             children: [
@@ -140,9 +130,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'Category filter',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -158,9 +146,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                   builder: (context, state) {
                     if (state.status == ProductStatus.loading &&
                         state.products.isEmpty) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     if (state.status == ProductStatus.failure &&
@@ -177,9 +163,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                     return RefreshIndicator(
                       onRefresh: () async {
                         if (_selectedCategory == 'all') {
-                          context.read<ProductBloc>().add(
-                            const LoadProducts(),
-                          );
+                          context.read<ProductBloc>().add(const LoadProducts());
                         } else {
                           context.read<ProductBloc>().add(
                             SearchProducts(
@@ -191,12 +175,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                       },
                       child: ListView.builder(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.fromLTRB(
-                          16,
-                          8,
-                          16,
-                          24,
-                        ),
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
                         itemCount: state.products.length,
                         itemBuilder: (context, index) {
                           final product = state.products[index];
@@ -211,7 +190,6 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                   },
                 ),
               ),
-              SizedBox(height: 70),
             ],
           ),
         ),
@@ -237,9 +215,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                   icon: const Icon(Icons.clear),
                 )
               : null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
         ),
       ),
     );
@@ -320,9 +296,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                     Text(
                       _formatCategory(product.categoryId),
                       style: TextStyle(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurfaceVariant,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
 
@@ -333,9 +307,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                         Icon(
                           Icons.arrow_forward_ios,
                           size: 14,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
 
                         const SizedBox(width: 4),
@@ -344,9 +316,9 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                           'View details',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -374,9 +346,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
             width: 90,
             height: 110,
             color: Colors.grey.shade200,
-            child: const Icon(
-              Icons.image_not_supported_outlined,
-            ),
+            child: const Icon(Icons.image_not_supported_outlined),
           );
         },
         loadingBuilder: (context, child, loadingProgress) {
@@ -404,8 +374,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
 
   Widget _buildEmptyState() {
     final hasFilters =
-        _searchController.text.trim().isNotEmpty ||
-        _selectedCategory != 'all';
+        _searchController.text.trim().isNotEmpty || _selectedCategory != 'all';
 
     return Center(
       child: Padding(
@@ -424,9 +393,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
             const SizedBox(height: 16),
 
             Text(
-              hasFilters
-                  ? 'No products found.'
-                  : 'No products available.',
+              hasFilters ? 'No products found.' : 'No products available.',
               style: Theme.of(context).textTheme.titleMedium,
             ),
 
@@ -446,9 +413,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
   Widget _buildErrorState(String message) {
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<ProductBloc>().add(
-          const LoadProducts(),
-        );
+        context.read<ProductBloc>().add(const LoadProducts());
       },
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -469,18 +434,13 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
 
                     const SizedBox(height: 16),
 
-                    Text(
-                      message,
-                      textAlign: TextAlign.center,
-                    ),
+                    Text(message, textAlign: TextAlign.center),
 
                     const SizedBox(height: 16),
 
                     ElevatedButton(
                       onPressed: () {
-                        context.read<ProductBloc>().add(
-                          const LoadProducts(),
-                        );
+                        context.read<ProductBloc>().add(const LoadProducts());
                       },
                       child: const Text('Retry'),
                     ),

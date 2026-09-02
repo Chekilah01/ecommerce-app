@@ -4,10 +4,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 class CustomerShellPage extends StatelessWidget {
-  const CustomerShellPage({
-    required this.navigationShell,
-    super.key,
-  });
+  const CustomerShellPage({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
@@ -33,24 +30,38 @@ class CustomerShellPage extends StatelessWidget {
         child: Container(
           margin: EdgeInsets.only(bottom: 10),
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 12.0),
+            padding: const EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              bottom: 12.0,
+            ),
             child: Card(
               elevation: 7,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30)
+                borderRadius: BorderRadius.circular(30),
               ),
-              
+
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 8.0,
+                ),
                 child: GNav(
-                  rippleColor: theme.colorScheme.primary.withValues(alpha: 0.15),
+                  rippleColor: theme.colorScheme.primary.withValues(
+                    alpha: 0.15,
+                  ),
                   hoverColor: theme.colorScheme.primary.withValues(alpha: 0.05),
                   gap: 6,
                   activeColor: activeColor,
                   iconSize: 22,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 10,
+                  ),
                   duration: const Duration(milliseconds: 300),
-                  tabBackgroundColor: theme.colorScheme.primary.withValues(alpha: 0.12),
+                  tabBackgroundColor: theme.colorScheme.primary.withValues(
+                    alpha: 0.12,
+                  ),
                   color: inactiveColor,
                   selectedIndex: currentIndex,
                   onTabChange: (index) {
@@ -68,7 +79,9 @@ class CustomerShellPage extends StatelessWidget {
                     GButton(
                       icon: Icons.search_outlined,
                       leading: Icon(
-                        currentIndex == 1 ? Icons.search : Icons.search_outlined,
+                        currentIndex == 1
+                            ? Icons.search
+                            : Icons.search_outlined,
                         color: currentIndex == 1 ? activeColor : inactiveColor,
                       ),
                       text: 'Search',

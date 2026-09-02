@@ -16,6 +16,7 @@ import 'package:final_project/features/customer/presentation/pages/cart_page.dar
 import 'package:final_project/features/customer/presentation/pages/customer_shell_page.dart';
 import 'package:final_project/features/customer/presentation/pages/home_page.dart';
 import 'package:final_project/features/customer/presentation/pages/orders_page.dart';
+import 'package:final_project/features/customer/presentation/pages/product_details_page.dart';
 import 'package:final_project/features/customer/presentation/pages/profile_page.dart';
 import 'package:final_project/features/customer/presentation/pages/search_page.dart';
 import 'package:final_project/features/product/domain/entities/product_entity.dart';
@@ -127,6 +128,17 @@ class AppRouter {
                   path: '/customer/search',
                   name: 'customer-search',
                   builder: (context, state) => const CustomerSearchPage(),
+                  routes: [
+                    GoRoute(
+                      path: 'product-details',
+                      name: 'customer-product-details',
+                      builder: (context, state) {
+                        final product = state.extra as ProductEntity;
+
+                        return ProductDetailsPage(product : product);
+                      },
+                    ),
+                  ]
                 ),
               ],
             ),
