@@ -283,6 +283,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                   Text(
                     '${product.price.toStringAsFixed(2)} DA',
                     style: TextStyle(
+                      fontFamily: 'Gilory',
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.primary,
