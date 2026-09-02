@@ -173,17 +173,19 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                           );
                         }
                       },
-                      child: ListView.builder(
+                      child: GridView.builder(
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 0.68,
+                        ),
                         itemCount: state.products.length,
                         itemBuilder: (context, index) {
                           final product = state.products[index];
-
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _buildProductCard(product),
-                          );
+                          return _buildProductCard(product);
                         },
                       ),
                     );
@@ -257,77 +259,49 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
         onTap: () {
           _openProductDetails(product);
         },
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildProductImage(product),
-
-              const SizedBox(width: 12),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _buildProductImage(product),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
-
-                    const SizedBox(height: 6),
-
-                    Text(
-                      '${product.price.toStringAsFixed(2)} DA',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${product.price.toStringAsFixed(2)} DA',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-
-                    const SizedBox(height: 4),
-
-                    Text(
-                      _formatCategory(product.categoryId),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _formatCategory(product.categoryId),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
-
-                    const SizedBox(height: 8),
-
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 14,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-
-                        const SizedBox(width: 4),
-
-                        Text(
-                          'View details',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -335,16 +309,16 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
 
   Widget _buildProductImage(ProductEntity product) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
       child: Image.network(
         product.mainImageUrl,
-        width: 90,
-        height: 110,
+        width: double.infinity,
+        height: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Container(
-            width: 90,
-            height: 110,
+            width: double.infinity,
+            height: double.infinity,
             color: Colors.grey.shade200,
             child: const Icon(Icons.image_not_supported_outlined),
           );
@@ -359,12 +333,9 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
             highlightColor: Colors.grey.shade100,
             period: const Duration(milliseconds: 1500),
             child: Container(
-              width: 90,
-              height: 110,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(10),
-              ),
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.grey.shade300,
             ),
           );
         },
