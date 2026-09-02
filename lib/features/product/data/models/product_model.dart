@@ -46,6 +46,37 @@ class ProductModel extends Equatable {
     required this.updatedAt,
   });
 
+  factory ProductModel.fromMap(String id, Map<String, dynamic> data) {
+    return ProductModel(
+      id: id,
+      name: data['name'] as String,
+      description: data['description'] as String,
+      price: (data['price'] as num).toDouble(),
+      deliveryFee: (data['deliveryFee'] as num).toDouble(),
+      stock: (data['stock'] as num).toInt(),
+      categoryId: data['categoryId'] as String,
+
+      mainImageUrl: data['mainImageUrl'] as String,
+      mainImagePublicId: data['mainImagePublicId'] as String,
+
+      additionalImages: (data['additionalImages'] as List<dynamic>? ?? [])
+          .map(
+            (image) => ProductImageModel.fromMap(
+              Map<String, dynamic>.from(image as Map),
+            ),
+          )
+          .toList(),
+
+      isFeatured: data['isFeatured'] as bool,
+      salesCount: (data['salesCount'] as num).toInt(),
+      averageRating: (data['averageRating'] as num).toDouble(),
+      ratingCount: (data['ratingCount'] as num).toInt(),
+
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+    );
+  }
+
   factory ProductModel.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,
   ) {
