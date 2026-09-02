@@ -22,6 +22,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isOutOfStock = widget.product.stock <= 0;
+
     return Scaffold(
       extendBody: false,
       extendBodyBehindAppBar: true,
@@ -36,10 +38,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               shape: const CircleBorder(),
               padding: EdgeInsets.zero,
               elevation: 0,
-              //TODO:color shouldn't be fixed
-              backgroundColor: Colors.white,
+              backgroundColor: isDarkMode ? Colors.black : Colors.white,
             ),
-            child: const Icon(Iconsax.arrow_left_copy, size: 24),
+            child: Icon(
+              Iconsax.arrow_left_copy,
+              size: 24,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
           ),
         ),
       ),
@@ -47,9 +52,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         child: Column(
           children: [
             ProductImageSlider(widget: widget),
-
             Padding(
-              padding: EdgeInsetsGeometry.only(
+              padding: const EdgeInsets.only(
                 right: AppSizes.defaultSpace,
                 left: AppSizes.defaultSpace,
                 bottom: AppSizes.defaultSpace,
@@ -58,14 +62,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ProductTitle(widget: widget),
-
                   RatingWidget(widget: widget),
-
                   ProductPrice(widget: widget),
-
                   ProductDescription(widget: widget),
-
-                  ReviewsPage(),
+                  const ReviewsPage(),
                 ],
               ),
             ),
@@ -74,7 +74,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsetsGeometry.fromLTRB(
+          padding: const EdgeInsets.fromLTRB(
             AppSizes.md,
             AppSizes.sm,
             AppSizes.md,
@@ -84,21 +84,28 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             width: double.infinity,
             height: 56,
             child: ElevatedButton.icon(
-              onPressed: () {
-                //TODO: add to cart + don't forget to disable button when out of stock!
-              },
+              onPressed: isOutOfStock
+                  ? null
+                  : () {
+                      // TODO: Add to cart action
+                    },
               style: ElevatedButton.styleFrom(
                 backgroundColor: isDarkMode ? Colors.white : Colors.black,
                 foregroundColor: isDarkMode ? Colors.black : Colors.white,
+                disabledBackgroundColor: Colors.grey.shade400,
+                disabledForegroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              icon: const Icon(Iconsax.shopping_cart_copy, size: 24),
+              icon: Icon(
+                isOutOfStock ? Icons.close_rounded : Iconsax.shopping_cart_copy,
+                size: 24,
+              ),
               label: Text(
-                'Add to Cart',
-                style: TextStyle(
+                isOutOfStock ? 'Out of Stock' : 'Add to Cart',
+                style: const TextStyle(
                   fontSize: AppSizes.md,
                   fontWeight: FontWeight.bold,
                 ),
