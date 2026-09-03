@@ -5,21 +5,14 @@ import 'package:flutter/material.dart';
 class CartSummary extends StatelessWidget {
   final CartState state;
 
-  const CartSummary({
-    required this.state,
-  });
+  const CartSummary({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(
-          16,
-          16,
-          16,
-          16,
-        ),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [
@@ -32,17 +25,11 @@ class CartSummary extends StatelessWidget {
         ),
         child: Column(
           children: [
-            SummaryRow(
-              title: 'Subtotal',
-              value: state.subtotal,
-            ),
+            SummaryRow(title: 'Subtotal', value: state.subtotal),
 
             const SizedBox(height: 8),
 
-            SummaryRow(
-              title: 'Delivery fee',
-              value: state.deliveryFee,
-            ),
+            SummaryRow(title: 'Delivery fee', value: state.deliveryFee),
 
             const SizedBox(height: 12),
 
@@ -66,7 +53,7 @@ class CartSummary extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Gilory'
+                    fontFamily: 'Gilory',
                   ),
                 ),
               ],
@@ -81,12 +68,29 @@ class CartSummary extends StatelessWidget {
                 onPressed: () {
                   // TODO: Order Now
                 },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith<Color>((
+                    states,
+                  ) {
+                    if (states.contains(WidgetState.disabled)) {
+                      return Colors.grey.shade400;
+                    }
+                    if (states.contains(WidgetState.pressed)) {
+                      return Colors.green.shade800; 
+                    }
+                    return Colors.green; 
+                  }),
+                  foregroundColor: WidgetStateProperty.all(Colors.white),
+                  elevation: WidgetStateProperty.all(0),
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
                 child: const Text(
                   'Order Now',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

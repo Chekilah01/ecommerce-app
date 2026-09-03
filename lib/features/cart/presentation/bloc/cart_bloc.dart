@@ -13,9 +13,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final AuthBloc _authBloc;
   late final StreamSubscription<AuthState> _authSubscription;
 
-  CartBloc({CartRepository? cartRepository, required AuthBloc authBloc})
+  CartBloc({CartRepository? cartRepository, required this._authBloc})
     : _cartRepository = cartRepository ?? CartRepository(),
-      _authBloc = authBloc,
       super(const CartState()) {
     on<LoadCart>(_onLoadCart);
     on<AddToCart>(_onAddToCart);
@@ -68,13 +67,15 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       final items = await _cartRepository.getCart(userId);
 
+      final normalizedItems = _mergeDuplicateItems(items);
+
       emit(
         state.copyWith(
           status: CartStatus.success,
-          items: items,
-          subtotal: _calculateSubtotal(items),
-          deliveryFee: _calculateDeliveryFee(items),
-          total: _calculateTotal(items),
+          items: normalizedItems,
+          subtotal: _calculateSubtotal(normalizedItems),
+          deliveryFee: _calculateDeliveryFee(normalizedItems),
+          total: _calculateTotal(normalizedItems),
           clearError: true,
         ),
       );
@@ -244,7 +245,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     final item = state.items[index];
 
-    // Quantity cannot go below 1.
+    
     if (item.quantity <= 1) {
       return;
     }
@@ -344,23 +345,25 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void _emitUpdatedCart(
-    Emitter<CartState> emit,
-    List<CartItemEntity> items,
-    String? successMessage,
-  ) {
-    emit(
-      state.copyWith(
-        status: CartStatus.actionSuccess,
-        items: items,
-        subtotal: _calculateSubtotal(items),
-        deliveryFee: _calculateDeliveryFee(items),
-        total: _calculateTotal(items),
-        successMessage: successMessage,
-        clearSuccessMessage: successMessage == null,
-        clearError: true,
-      ),
-    );
-  }
+  Emitter<CartState> emit,
+  List<CartItemEntity> items,
+  String? successMessage,
+) {
+  final normalizedItems = _mergeDuplicateItems(items);
+
+  emit(
+    state.copyWith(
+      status: CartStatus.actionSuccess,
+      items: normalizedItems,
+      subtotal: _calculateSubtotal(normalizedItems),
+      deliveryFee: _calculateDeliveryFee(normalizedItems),
+      total: _calculateTotal(normalizedItems),
+      successMessage: successMessage,
+      clearSuccessMessage: successMessage == null,
+      clearError: true,
+    ),
+  );
+}
 
   void _onClearCartState(ClearCartState event, Emitter<CartState> emit) {
     emit(const CartState());
@@ -370,5 +373,26 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> close() {
     _authSubscription.cancel();
     return super.close();
+  }
+
+  List<CartItemEntity> _mergeDuplicateItems(List<CartItemEntity> items) {
+    final Map<String, CartItemEntity> uniqueItems = {};
+
+    for (final item in items) {
+      final productId = item.product.id;
+
+      if (uniqueItems.containsKey(productId)) {
+        final existingItem = uniqueItems[productId]!;
+
+        uniqueItems[productId] = CartItemEntity(
+          product: item.product,
+          quantity: existingItem.quantity + item.quantity,
+        );
+      } else {
+        uniqueItems[productId] = item;
+      }
+    }
+
+    return uniqueItems.values.toList();
   }
 }

@@ -10,7 +10,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 class CartItemCard extends StatelessWidget {
   final CartItemEntity item;
 
-  const CartItemCard({
+  const CartItemCard({super.key, 
     required this.item,
   });
 

@@ -82,6 +82,7 @@ flutter:
     - assets/icons/no_products.svg
     - assets/icons/add_image.svg
     - assets/icons/no_network.svg
+    - assets/icons/emptycart.svg
 
   fonts:
     - family: MyCustomFont

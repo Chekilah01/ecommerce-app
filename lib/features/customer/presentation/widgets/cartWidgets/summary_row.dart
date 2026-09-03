@@ -4,7 +4,7 @@ class SummaryRow extends StatelessWidget {
   final String title;
   final double value;
 
-  const SummaryRow({
+  const SummaryRow({super.key, 
     required this.title,
     required this.value,
   });
