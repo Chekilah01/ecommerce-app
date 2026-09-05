@@ -37,6 +37,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<ConfirmOrder>(_onConfirmOrder);
     on<CancelOrder>(_onCancelOrder);
     on<ClearOrderState>(_onClearOrderState);
+    on<LoadOrdersStatistics>(_onLoadOrdersStatistics);
 
     _authSubscription = _authBloc.stream.listen((authState) {
       if (authState is Unauthenticated) {
@@ -214,7 +215,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   }
 
   Future<void> _onLoadOrders(LoadOrders event, Emitter<OrderState> emit) async {
-    final userId = event.userId ?? _userId;
+    final userId = event.loadAllOrders ? null : event.userId ?? _userId;
 
     emit(state.copyWith(status: OrderStatusState.loading, clearError: true));
 
@@ -391,6 +392,56 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         clearError: true,
       ),
     );
+  }
+
+  Future<void> _onLoadOrdersStatistics(
+    LoadOrdersStatistics event,
+    Emitter<OrderState> emit,
+  ) async {
+    emit(state.copyWith(status: OrderStatusState.loading, clearError: true));
+
+    try {
+      final orders = await _orderRepository.getOrders(
+        startDate: event.startDate,
+        endDate: event.endDate,
+      );
+
+      final totalOrders = orders.length;
+
+      final pendingOrders = orders
+          .where((order) => order.status == OrderStatus.pending)
+          .length;
+
+      final confirmedOrders = orders
+          .where((order) => order.status == OrderStatus.confirmed)
+          .length;
+
+      final cancelledOrders = orders
+          .where((order) => order.status == OrderStatus.cancelled)
+          .length;
+
+      final revenue = orders
+          .where((order) => order.status == OrderStatus.confirmed)
+          .fold<double>(0, (sum, order) => sum + order.total);
+
+      emit(
+        state.copyWith(
+          totalOrders: totalOrders,
+          pendingOrders: pendingOrders,
+          confirmedOrders: confirmedOrders,
+          cancelledOrders: cancelledOrders,
+          revenue: revenue,
+          clearError: true,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: OrderStatusState.failure,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
   }
 
   void _onClearOrderState(ClearOrderState event, Emitter<OrderState> emit) {

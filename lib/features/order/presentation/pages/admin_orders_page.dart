@@ -22,7 +22,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
 
     // No userId = load all orders.
     context.read<OrderBloc>().add(
-      const LoadOrders(),
+      const LoadOrders(loadAllOrders: true),
     );
   }
 
@@ -44,6 +44,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
 
     context.read<OrderBloc>().add(
       LoadOrders(
+        loadAllOrders: true,
         startDate: selectedRange.start,
         endDate: selectedRange.end.add(
           const Duration(days: 1),
@@ -58,7 +59,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
     });
 
     context.read<OrderBloc>().add(
-      const LoadOrders(),
+      const LoadOrders(loadAllOrders: true),
     );
   }
 
@@ -67,6 +68,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
 
     context.read<OrderBloc>().add(
       LoadOrders(
+        loadAllOrders: true,
         startDate: range?.start,
         endDate: range?.end.add(
           const Duration(days: 1),

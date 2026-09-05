@@ -108,7 +108,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${_getGreeting()}, $username 👋',
+                '${_getGreeting()}, $username',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.5,

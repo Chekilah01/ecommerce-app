@@ -15,11 +15,27 @@ class LoadOrders extends OrderEvent {
   final String? userId;
   final DateTime? startDate;
   final DateTime? endDate;
+  final bool loadAllOrders;
 
-  const LoadOrders({this.userId, this.startDate, this.endDate});
+  const LoadOrders({
+    this.userId,
+    this.startDate,
+    this.endDate,
+    this.loadAllOrders = false,
+  });
 
   @override
-  List<Object?> get props => [userId, startDate, endDate];
+  List<Object?> get props => [userId, startDate, endDate, loadAllOrders];
+}
+
+class LoadOrdersStatistics extends OrderEvent {
+  final DateTime? startDate;
+  final DateTime? endDate;
+
+  const LoadOrdersStatistics({this.startDate, this.endDate});
+
+  @override
+  List<Object?> get props => [startDate, endDate];
 }
 
 class LoadOrderById extends OrderEvent {

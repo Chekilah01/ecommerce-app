@@ -12,6 +12,12 @@ class OrderState extends Equatable {
   final String? pendingOrderId;
   final String? createdOrderId;
 
+  final int totalOrders;
+  final int pendingOrders;
+  final int confirmedOrders;
+  final int cancelledOrders;
+  final double revenue;
+
   final String? errorMessage;
   final String? successMessage;
 
@@ -21,6 +27,11 @@ class OrderState extends Equatable {
     this.selectedOrder,
     this.pendingOrderId,
     this.createdOrderId,
+    this.totalOrders = 0,
+    this.pendingOrders = 0,
+    this.confirmedOrders = 0,
+    this.cancelledOrders = 0,
+    this.revenue = 0,
     this.errorMessage,
     this.successMessage,
   });
@@ -31,6 +42,11 @@ class OrderState extends Equatable {
     OrderEntity? selectedOrder,
     String? pendingOrderId,
     String? createdOrderId,
+    int? totalOrders,
+    int? pendingOrders,
+    int? confirmedOrders,
+    int? cancelledOrders,
+    double? revenue,
     String? errorMessage,
     String? successMessage,
     bool clearSelectedOrder = false,
@@ -51,6 +67,11 @@ class OrderState extends Equatable {
       createdOrderId: clearCreatedOrderId
           ? null
           : createdOrderId ?? this.createdOrderId,
+      totalOrders: totalOrders ?? this.totalOrders,
+      pendingOrders: pendingOrders ?? this.pendingOrders,
+      confirmedOrders: confirmedOrders ?? this.confirmedOrders,
+      cancelledOrders: cancelledOrders ?? this.cancelledOrders,
+      revenue: revenue ?? this.revenue,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
       successMessage: clearSuccessMessage
           ? null
@@ -65,6 +86,11 @@ class OrderState extends Equatable {
     selectedOrder,
     pendingOrderId,
     createdOrderId,
+    totalOrders,
+    pendingOrders,
+    confirmedOrders,
+    cancelledOrders,
+    revenue,
     errorMessage,
     successMessage,
   ];
