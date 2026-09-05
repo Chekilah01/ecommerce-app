@@ -2,6 +2,7 @@ import 'package:final_project/core/config/app_mode_settings.dart';
 import 'package:final_project/core/config/app_router.dart';
 import 'package:final_project/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:final_project/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:final_project/features/order/presentation/bloc/order_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +26,13 @@ Future<void> main() async {
 
         BlocProvider(
           create: (context) => CartBloc(authBloc: context.read<AuthBloc>()),
+        ),
+
+        BlocProvider(
+          create: (context) => OrderBloc(
+            authBloc: context.read<AuthBloc>(),
+            cartBloc: context.read<CartBloc>(),
+          ),
         ),
       ],
       child: const MyApp(),
