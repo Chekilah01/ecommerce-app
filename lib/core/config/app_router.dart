@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:final_project/features/admin/presentation/pages/add_product_page.dart';
 import 'package:final_project/features/admin/presentation/pages/admin_dashboard_page.dart';
-import 'package:final_project/features/admin/presentation/pages/admin_orders_page.dart';
 import 'package:final_project/features/admin/presentation/pages/admin_products_page.dart';
 import 'package:final_project/features/admin/presentation/pages/admin_profile_page.dart';
 import 'package:final_project/features/admin/presentation/pages/admin_shell_page.dart';
@@ -12,10 +11,13 @@ import 'package:final_project/features/auth/presentation/bloc/auth_state.dart';
 import 'package:final_project/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:final_project/features/auth/presentation/pages/login_page.dart';
 import 'package:final_project/features/auth/presentation/pages/register_page.dart';
-import 'package:final_project/features/customer/presentation/pages/cart_page.dart';
+import 'package:final_project/features/cart/presentation/pages/cart_page.dart';
 import 'package:final_project/features/customer/presentation/pages/customer_shell_page.dart';
 import 'package:final_project/features/customer/presentation/pages/home_page.dart';
-import 'package:final_project/features/customer/presentation/pages/orders_page.dart';
+import 'package:final_project/features/order/presentation/pages/admin_order_details_page.dart';
+import 'package:final_project/features/order/presentation/pages/admin_orders_page.dart';
+import 'package:final_project/features/order/presentation/pages/order_details_page.dart';
+import 'package:final_project/features/order/presentation/pages/orders_page.dart';
 import 'package:final_project/features/customer/presentation/pages/product_details_page.dart';
 import 'package:final_project/features/customer/presentation/pages/profile_page.dart';
 import 'package:final_project/features/customer/presentation/pages/search_page.dart';
@@ -109,7 +111,7 @@ class AppRouter {
             return BlocProvider(
               create: (context) => ProductBloc(),
               child: CustomerShellPage(navigationShell: navigationShell),
-              );
+            );
           },
           branches: [
             StatefulShellBranch(
@@ -135,10 +137,10 @@ class AppRouter {
                       builder: (context, state) {
                         final product = state.extra as ProductEntity;
 
-                        return ProductDetailsPage(product : product);
+                        return ProductDetailsPage(product: product);
                       },
                     ),
-                  ]
+                  ],
                 ),
               ],
             ),
@@ -159,6 +161,17 @@ class AppRouter {
                   path: '/customer/orders',
                   name: 'customer-orders',
                   builder: (context, state) => const OrdersPage(),
+                  routes: [
+                    GoRoute(
+                      path: ':orderId',
+                      name: 'customer-order-details',
+                      builder: (context, state) {
+                        final orderId = state.pathParameters['orderId']!;
+
+                        return OrderDetailsPage(orderId: orderId);
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -229,6 +242,17 @@ class AppRouter {
                   path: '/admin/orders',
                   name: 'admin-orders',
                   builder: (context, state) => const AdminOrdersPage(),
+                  routes: [
+                    GoRoute(
+                      path: ':orderId',
+                      name: 'admin-order-details',
+                      builder: (context, state) {
+                        final orderId = state.pathParameters['orderId']!;
+
+                        return AdminOrderDetailsPage(orderId: orderId);
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

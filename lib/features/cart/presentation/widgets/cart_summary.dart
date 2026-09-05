@@ -1,5 +1,5 @@
 import 'package:final_project/features/cart/presentation/bloc/cart_state.dart';
-import 'package:final_project/features/customer/presentation/widgets/cartWidgets/summary_row.dart';
+import 'package:final_project/features/cart/presentation/widgets/summary_row.dart';
 import 'package:final_project/features/order/presentation/bloc/order_bloc.dart';
 import 'package:final_project/features/order/presentation/bloc/order_event.dart';
 import 'package:final_project/features/order/presentation/bloc/order_state.dart';

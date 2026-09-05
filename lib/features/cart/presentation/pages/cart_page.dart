@@ -1,8 +1,8 @@
 import 'package:final_project/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:final_project/features/cart/presentation/bloc/cart_event.dart';
 import 'package:final_project/features/cart/presentation/bloc/cart_state.dart';
-import 'package:final_project/features/customer/presentation/widgets/cartWidgets/cart_item_card.dart';
-import 'package:final_project/features/customer/presentation/widgets/cartWidgets/cart_summary.dart';
+import 'package:final_project/features/cart/presentation/widgets/cart_item_card.dart';
+import 'package:final_project/features/cart/presentation/widgets/cart_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';

@@ -2,7 +2,7 @@
 import 'package:final_project/features/cart/domain/entities/cart_item_entity.dart';
 import 'package:final_project/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:final_project/features/cart/presentation/bloc/cart_event.dart';
-import 'package:final_project/features/customer/presentation/widgets/cartWidgets/quantity_button.dart';
+import 'package:final_project/features/cart/presentation/widgets/quantity_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
