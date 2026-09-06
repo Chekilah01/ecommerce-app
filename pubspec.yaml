@@ -58,6 +58,7 @@ dependencies:
   readmore: ^3.0.0
   connectivity_plus: ^7.3.1
   url_launcher: ^6.3.2
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -93,6 +94,11 @@ flutter:
     - family: Gilory
       fonts:
         - asset: assets/fonts/Gilroy-Black.ttf
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/shopyme.png"
+  remove_alpha_ios: true
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
