@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:final_project/core/config/app_mode_settings.dart';
 import 'package:final_project/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:final_project/features/auth/presentation/bloc/auth_state.dart';
 import 'package:final_project/features/product/domain/entities/product_entity.dart';
@@ -9,6 +10,7 @@ import 'package:final_project/features/product/presentation/bloc/product_state.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
@@ -195,6 +197,23 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
+          ),
+          ValueListenableBuilder<ThemeMode>(
+            valueListenable: themeNotifier,
+            builder: (context, value, child) {
+              final isDark = value == ThemeMode.dark;
+              return IconButton(
+                onPressed: () {
+                  themeNotifier.value = isDark
+                      ? ThemeMode.light
+                      : ThemeMode.dark;
+                },
+                icon: Icon(isDark ? Iconsax.sun_1 : Iconsax.moon),
+                tooltip: isDark
+                    ? 'Switch to Light Mode'
+                    : 'Switch to Dark Mode',
+              );
+            },
           ),
         ],
       ),
