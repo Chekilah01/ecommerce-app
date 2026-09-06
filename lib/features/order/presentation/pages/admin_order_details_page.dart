@@ -5,29 +5,23 @@ import 'package:final_project/features/order/presentation/bloc/order_state.dart'
 import 'package:final_project/features/order/presentation/widgets/order_details_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AdminOrderDetailsPage extends StatefulWidget {
   final String orderId;
 
-  const AdminOrderDetailsPage({
-    super.key,
-    required this.orderId,
-  });
+  const AdminOrderDetailsPage({super.key, required this.orderId});
 
   @override
-  State<AdminOrderDetailsPage> createState() =>
-      _AdminOrderDetailsPageState();
+  State<AdminOrderDetailsPage> createState() => _AdminOrderDetailsPageState();
 }
 
-class _AdminOrderDetailsPageState
-    extends State<AdminOrderDetailsPage> {
+class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage> {
   @override
   void initState() {
     super.initState();
 
-    context.read<OrderBloc>().add(
-      LoadOrderById(widget.orderId),
-    );
+    context.read<OrderBloc>().add(LoadOrderById(widget.orderId));
   }
 
   Future<void> _confirmOrder() async {
@@ -43,9 +37,7 @@ class _AdminOrderDetailsPageState
       return;
     }
 
-    context.read<OrderBloc>().add(
-      ConfirmOrder(widget.orderId),
-    );
+    context.read<OrderBloc>().add(ConfirmOrder(widget.orderId));
   }
 
   Future<void> _cancelOrder() async {
@@ -60,9 +52,7 @@ class _AdminOrderDetailsPageState
       return;
     }
 
-    context.read<OrderBloc>().add(
-      CancelOrder(widget.orderId),
-    );
+    context.read<OrderBloc>().add(CancelOrder(widget.orderId));
   }
 
   Future<bool?> _showConfirmationDialog({
@@ -112,37 +102,29 @@ class _AdminOrderDetailsPageState
         centerTitle: true,
         title: const Text(
           'Order Details',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: BlocConsumer<OrderBloc, OrderState>(
         listener: (context, state) {
           if (state.status == OrderStatusState.actionSuccess &&
               state.successMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.successMessage!),
-              ),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.successMessage!)));
           }
 
           if (state.status == OrderStatusState.failure &&
               state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage!),
-              ),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
           }
         },
         builder: (context, state) {
           if (state.status == OrderStatusState.loading &&
               state.selectedOrder == null) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state.status == OrderStatusState.failure &&
@@ -153,23 +135,18 @@ class _AdminOrderDetailsPageState
           final order = state.selectedOrder;
 
           if (order == null) {
-            return const Center(
-              child: Text('Order not found.'),
-            );
+            return const Center(child: Text('Order not found.'));
           }
 
           return Column(
             children: [
-              Expanded(
-                child: OrderDetailsContent(
-                  order: order,
-                ),
-              ),
+              Expanded(child: OrderDetailsContent(order: order)),
+
+              _buildCallCustomerButton(order.phone),
 
               if (order.status == OrderStatus.pending)
                 _buildActionButtons(
-                  isLoading:
-                      state.status == OrderStatusState.loading,
+                  isLoading: state.status == OrderStatusState.loading,
                 ),
 
               if (order.status != OrderStatus.pending)
@@ -188,22 +165,16 @@ class _AdminOrderDetailsPageState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 50,
-            ),
+            const Icon(Icons.error_outline, size: 50),
             const SizedBox(height: 16),
             Text(
-              state.errorMessage ??
-                  'Something went wrong.',
+              state.errorMessage ?? 'Something went wrong.',
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                context.read<OrderBloc>().add(
-                  LoadOrderById(widget.orderId),
-                );
+                context.read<OrderBloc>().add(LoadOrderById(widget.orderId));
               },
               child: const Text('Try Again'),
             ),
@@ -213,21 +184,13 @@ class _AdminOrderDetailsPageState
     );
   }
 
-  Widget _buildActionButtons({
-    required bool isLoading,
-  }) {
+  Widget _buildActionButtons({required bool isLoading}) {
     return SafeArea(
       top: false,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(
-          16,
-          12,
-          16,
-          16,
-        ),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
         decoration: BoxDecoration(
-          color: Theme.of(context)
-              .scaffoldBackgroundColor,
+          color: Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [
             BoxShadow(
               blurRadius: 10,
@@ -243,26 +206,18 @@ class _AdminOrderDetailsPageState
                 onPressed: isLoading ? null : _cancelOrder,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.red,
-                  disabledForegroundColor:
-                      Colors.grey.shade400,
+                  disabledForegroundColor: Colors.grey.shade400,
                   side: BorderSide(
-                    color: isLoading
-                        ? Colors.grey.shade400
-                        : Colors.red,
+                    color: isLoading ? Colors.grey.shade400 : Colors.red,
                   ),
-                  minimumSize: const Size(
-                    double.infinity,
-                    50,
-                  ),
+                  minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: const Text(
                   'Cancel Order',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -273,12 +228,8 @@ class _AdminOrderDetailsPageState
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
-                  disabledBackgroundColor:
-                      Colors.grey.shade400,
-                  minimumSize: const Size(
-                    double.infinity,
-                    50,
-                  ),
+                  disabledBackgroundColor: Colors.grey.shade400,
+                  minimumSize: const Size(double.infinity, 50),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -295,9 +246,7 @@ class _AdminOrderDetailsPageState
                       )
                     : const Text(
                         'Confirm Order',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
               ),
             ),
@@ -308,8 +257,7 @@ class _AdminOrderDetailsPageState
   }
 
   Widget _buildStatusMessage(OrderStatus status) {
-    final isConfirmed =
-        status == OrderStatus.confirmed;
+    final isConfirmed = status == OrderStatus.confirmed;
 
     return SafeArea(
       top: false,
@@ -317,8 +265,7 @@ class _AdminOrderDetailsPageState
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Theme.of(context)
-              .scaffoldBackgroundColor,
+          color: Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [
             BoxShadow(
               blurRadius: 10,
@@ -331,12 +278,8 @@ class _AdminOrderDetailsPageState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              isConfirmed
-                  ? Icons.check_circle_outline
-                  : Icons.cancel_outlined,
-              color: isConfirmed
-                  ? Colors.green
-                  : Colors.red,
+              isConfirmed ? Icons.check_circle_outline : Icons.cancel_outlined,
+              color: isConfirmed ? Colors.green : Colors.red,
             ),
             const SizedBox(width: 8),
             Text(
@@ -345,14 +288,55 @@ class _AdminOrderDetailsPageState
                   : 'This order has been cancelled.',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: isConfirmed
-                    ? Colors.green
-                    : Colors.red,
+                color: isConfirmed ? Colors.green : Colors.red,
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildCallCustomerButton(String phone) {
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsetsGeometry.fromLTRB(16, 8, 16, 8),
+        child: SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: ElevatedButton.icon(
+            icon: Icon(Icons.call),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: () => _callCustomer(phone),
+            label: const Text(
+              'Call Customer',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _callCustomer(String phone) async {
+    final phoneUri = Uri(scheme: 'tel', path: phone);
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open the phone app.')),
+      );
+    }
   }
 }

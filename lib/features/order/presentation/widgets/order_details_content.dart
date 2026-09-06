@@ -50,6 +50,8 @@ class OrderDetailsContent extends StatelessWidget {
           DeliveryInformation(order: order),
 
           const SizedBox(height: 20),
+
+          
         ],
       ),
     );

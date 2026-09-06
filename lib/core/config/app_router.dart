@@ -182,6 +182,13 @@ class AppRouter {
                   path: '/customer/profile',
                   name: 'customer-profile',
                   builder: (context, state) => const ProfilePage(),
+                  routes: [
+                    GoRoute(
+                      path: 'edit',
+                      name: 'customer-edit-profile',
+                      builder: (context, state) => const EditProfilePage(),
+                    ),
+                  ],
                 ),
               ],
             ),
