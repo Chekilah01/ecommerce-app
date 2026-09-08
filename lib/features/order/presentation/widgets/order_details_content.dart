@@ -49,7 +49,7 @@ class OrderDetailsContent extends StatelessWidget {
 
           DeliveryInformation(order: order),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 100),
 
           
         ],
