@@ -12,6 +12,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final CartRepository _cartRepository;
   final AuthBloc _authBloc;
   late final StreamSubscription<AuthState> _authSubscription;
+  
 
   CartBloc({CartRepository? cartRepository, required this._authBloc})
     : _cartRepository = cartRepository ?? CartRepository(),
