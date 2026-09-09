@@ -14,6 +14,7 @@ import 'package:final_project/features/auth/presentation/pages/register_page.dar
 import 'package:final_project/features/cart/presentation/pages/cart_page.dart';
 import 'package:final_project/features/customer/presentation/pages/customer_shell_page.dart';
 import 'package:final_project/features/customer/presentation/pages/home_page.dart';
+import 'package:final_project/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:final_project/features/order/presentation/pages/admin_order_details_page.dart';
 import 'package:final_project/features/order/presentation/pages/admin_orders_page.dart';
 import 'package:final_project/features/order/presentation/pages/order_details_page.dart';
@@ -45,13 +46,34 @@ class GoRouterRefreshNotifier extends ChangeNotifier {
   }
 }
 
+class OnboardingRefreshNotifier extends ChangeNotifier {
+  bool _completed;
+
+  OnboardingRefreshNotifier(this._completed);
+
+  bool get completed => _completed;
+
+  void complete() {
+    if (_completed) return;
+
+    _completed = true;
+    notifyListeners();
+  }
+}
+
 class AppRouter {
   AppRouter._();
 
-  static GoRouter createRouter(AuthBloc authBloc) {
+  static GoRouter createRouter(
+    AuthBloc authBloc,
+    OnboardingRefreshNotifier onboardingNotifier,
+  ) {
     return GoRouter(
       initialLocation: '/',
-      refreshListenable: GoRouterRefreshNotifier(authBloc.stream),
+      refreshListenable: Listenable.merge([
+        GoRouterRefreshNotifier(authBloc.stream),
+        onboardingNotifier,
+      ]),
       redirect: (context, state) {
         final authState = authBloc.state;
 
@@ -60,10 +82,16 @@ class AppRouter {
         }
 
         if (authState is Unauthenticated) {
+          final isOnboardingPage = state.matchedLocation == '/onboarding';
+
           final isAuthPage =
               state.matchedLocation == '/login' ||
               state.matchedLocation == '/register' ||
               state.matchedLocation == '/forgot-password';
+
+          if (!onboardingNotifier.completed) {
+            return isOnboardingPage ? null : '/onboarding';
+          }
 
           return isAuthPage ? null : '/login';
         }
@@ -90,6 +118,12 @@ class AppRouter {
           path: '/',
           name: 'splash',
           builder: (context, state) => const SplashPage(),
+        ),
+        GoRoute(
+          path: '/onboarding',
+          name: 'onboarding',
+          builder: (context, state) =>
+              OnboardingPage(onCompleted: onboardingNotifier.complete),
         ),
         GoRoute(
           path: '/login',

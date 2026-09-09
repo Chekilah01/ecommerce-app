@@ -2,6 +2,7 @@ import 'package:final_project/core/config/app_mode_settings.dart';
 import 'package:final_project/core/config/app_router.dart';
 import 'package:final_project/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:final_project/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:final_project/features/onboarding/data/datasource/onboarding_storage.dart';
 import 'package:final_project/features/order/presentation/bloc/order_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,6 +20,14 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  final onboardingStorage = OnboardingStorage();
+
+  final onboardingCompleted =
+      await onboardingStorage.isOnboardingCompleted();
+
+  final onboardingNotifier =
+      OnboardingRefreshNotifier(onboardingCompleted);
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -35,13 +44,20 @@ Future<void> main() async {
           ),
         ),
       ],
-      child: const MyApp(),
+      child: MyApp(
+        onboardingNotifier: onboardingNotifier,
+      ),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final OnboardingRefreshNotifier onboardingNotifier;
+
+  const MyApp({
+    super.key,
+    required this.onboardingNotifier,
+  });
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -54,7 +70,10 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     final authBloc = context.read<AuthBloc>();
-    _router = AppRouter.createRouter(authBloc);
+    _router = AppRouter.createRouter(
+      authBloc, 
+      widget.onboardingNotifier,
+      );
   }
 
   @override
