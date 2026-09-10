@@ -42,6 +42,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
       _selectedDateRange = selectedRange;
     });
 
+    // ignore: use_build_context_synchronously
     context.read<OrderBloc>().add(
       LoadOrders(
         loadAllOrders: true,

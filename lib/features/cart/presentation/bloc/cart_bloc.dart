@@ -12,7 +12,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final CartRepository _cartRepository;
   final AuthBloc _authBloc;
   late final StreamSubscription<AuthState> _authSubscription;
-  
 
   CartBloc({CartRepository? cartRepository, required this._authBloc})
     : _cartRepository = cartRepository ?? CartRepository(),
@@ -66,7 +65,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(status: CartStatus.loading, clearError: true));
 
     try {
-      final items = await _cartRepository.getCart(userId);
+      final items = await _cartRepository
+          .getCart(userId);
 
       final normalizedItems = _mergeDuplicateItems(items);
 
@@ -246,7 +246,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     final item = state.items[index];
 
-    
     if (item.quantity <= 1) {
       return;
     }
@@ -346,25 +345,25 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void _emitUpdatedCart(
-  Emitter<CartState> emit,
-  List<CartItemEntity> items,
-  String? successMessage,
-) {
-  final normalizedItems = _mergeDuplicateItems(items);
+    Emitter<CartState> emit,
+    List<CartItemEntity> items,
+    String? successMessage,
+  ) {
+    final normalizedItems = _mergeDuplicateItems(items);
 
-  emit(
-    state.copyWith(
-      status: CartStatus.actionSuccess,
-      items: normalizedItems,
-      subtotal: _calculateSubtotal(normalizedItems),
-      deliveryFee: _calculateDeliveryFee(normalizedItems),
-      total: _calculateTotal(normalizedItems),
-      successMessage: successMessage,
-      clearSuccessMessage: successMessage == null,
-      clearError: true,
-    ),
-  );
-}
+    emit(
+      state.copyWith(
+        status: CartStatus.actionSuccess,
+        items: normalizedItems,
+        subtotal: _calculateSubtotal(normalizedItems),
+        deliveryFee: _calculateDeliveryFee(normalizedItems),
+        total: _calculateTotal(normalizedItems),
+        successMessage: successMessage,
+        clearSuccessMessage: successMessage == null,
+        clearError: true,
+      ),
+    );
+  }
 
   void _onClearCartState(ClearCartState event, Emitter<CartState> emit) {
     emit(const CartState());

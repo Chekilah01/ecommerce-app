@@ -23,12 +23,10 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
   OrderBloc({
     OrderRepository? orderRepository,
-    required AuthBloc authBloc,
-    required CartBloc cartBloc,
+    required this._authBloc,
+    required this._cartBloc,
     NetworkInfo? networkInfo,
   }) : _orderRepository = orderRepository ?? OrderRepository(),
-       _authBloc = authBloc,
-       _cartBloc = cartBloc,
        _networkInfo = networkInfo ?? NetworkInfo(),
        super(const OrderState()) {
     on<CreateOrder>(_onCreateOrder);

@@ -105,7 +105,6 @@ class AdminProfilePage extends StatelessWidget {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
-            //TODO: removed for testing
             //ScaffoldMessenger.of(context,).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },

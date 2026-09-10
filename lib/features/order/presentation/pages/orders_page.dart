@@ -40,6 +40,7 @@ class _OrdersPageState extends State<OrdersPage> {
       _selectedDateRange = selectedRange;
     });
 
+    // ignore: use_build_context_synchronously
     context.read<OrderBloc>().add(
       LoadOrders(
         startDate: selectedRange.start,
