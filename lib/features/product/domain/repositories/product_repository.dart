@@ -94,6 +94,7 @@ class ProductRepository {
       final product = ProductModel(
         id: _uuid.v4(),
         name: name,
+        searchName: name.trim().toLowerCase(),
         description: description,
         price: price,
         deliveryFee: deliveryFee,
@@ -178,6 +179,7 @@ class ProductRepository {
       final updatedProduct = ProductModel(
         id: product.id,
         name: product.name,
+        searchName: product.name.trim().toLowerCase(),
         description: product.description,
         price: product.price,
         deliveryFee: product.deliveryFee,
@@ -228,23 +230,11 @@ class ProductRepository {
     String query = '',
     String categoryId = 'all',
   }) async {
-    final products = await _productRemoteDataSource.getProducts();
+    final products = await _productRemoteDataSource.searchProducts(
+      query: query,
+      categoryId: categoryId,
+    );
 
-    final normalizedQuery = query.trim().toLowerCase();
-    final normalizedCategory = categoryId.trim().toLowerCase();
-
-    final filteredProducts = products.where((product) {
-      final matchesCategory =
-          normalizedCategory == 'all' ||
-          product.categoryId.toLowerCase() == normalizedCategory;
-
-      final matchesQuery =
-          normalizedQuery.isEmpty ||
-          product.name.toLowerCase().contains(normalizedQuery);
-
-      return matchesCategory && matchesQuery;
-    }).toList();
-
-    return filteredProducts.map((product) => product.toEntity()).toList();
+    return products.map((product) => product.toEntity()).toList();
   }
 }

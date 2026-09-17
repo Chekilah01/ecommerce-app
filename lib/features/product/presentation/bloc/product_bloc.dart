@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:final_project/features/product/domain/repositories/product_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,7 +18,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<LoadProductsByCategory>(_onLoadProductsByCategory);
     on<LoadFeaturedProducts>(_onLoadFeaturedProducts);
     on<LoadPopularProducts>(_onLoadPopularProducts);
-    on<SearchProducts>(_onSearchProducts);
+    on<SearchProducts>(_onSearchProducts, transformer: restartable());
     on<CreateProduct>(_onCreateProduct);
     on<UpdateProduct>(_onUpdateProduct);
     on<DeleteProduct>(_onDeleteProduct);
@@ -179,29 +180,41 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     SearchProducts event,
     Emitter<ProductState> emit,
   ) async {
-    final normalizedQuery = event.query.trim().toLowerCase();
-    final normalizedCategory = event.categoryId.trim().toLowerCase();
+    await Future.delayed(const Duration(milliseconds: 400));
 
-    final filteredProducts = state.allProducts.where((product) {
-      final matchesCategory =
-          normalizedCategory == 'all' ||
-          product.categoryId.toLowerCase() == normalizedCategory;
-
-      final matchesQuery =
-          normalizedQuery.isEmpty ||
-          product.name.toLowerCase().contains(normalizedQuery);
-
-      return matchesCategory && matchesQuery;
-    }).toList();
+    final query = event.query.trim();
+    final categoryId = event.categoryId.trim();
 
     emit(
       state.copyWith(
-        status: ProductStatus.success,
-        products: filteredProducts,
+        status: ProductStatus.loading,
         clearError: true,
         clearSuccessMessage: true,
       ),
     );
+
+    try {
+      final products = await _productRepository.searchProducts(
+        query: query,
+        categoryId: categoryId,
+      );
+
+      emit(
+        state.copyWith(
+          status: ProductStatus.success,
+          products: products,
+          clearError: true,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: ProductStatus.failure,
+          errorMessage: e.toString(),
+          clearSuccessMessage: true,
+        ),
+      );
+    }
   }
 
   Future<void> _onCreateProduct(

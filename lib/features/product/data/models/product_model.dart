@@ -7,6 +7,7 @@ import '../../domain/entities/product_entity.dart';
 class ProductModel extends Equatable {
   final String id;
   final String name;
+  final String searchName;
   final String description;
   final double price;
   final double deliveryFee;
@@ -30,6 +31,7 @@ class ProductModel extends Equatable {
   const ProductModel({
     required this.id,
     required this.name,
+    required this.searchName,
     required this.description,
     required this.price,
     required this.deliveryFee,
@@ -50,6 +52,9 @@ class ProductModel extends Equatable {
     return ProductModel(
       id: id,
       name: data['name'] as String,
+      searchName:
+          data['searchName'] as String? ??
+          data['name'].toString().trim().toLowerCase(),
       description: data['description'] as String,
       price: (data['price'] as num).toDouble(),
       deliveryFee: (data['deliveryFee'] as num).toDouble(),
@@ -89,6 +94,9 @@ class ProductModel extends Equatable {
     return ProductModel(
       id: doc.id,
       name: data['name'] as String,
+      searchName:
+          data['searchName'] as String? ??
+          data['name'].toString().trim().toLowerCase(),
       description: data['description'] as String,
       price: (data['price'] as num).toDouble(),
       deliveryFee: (data['deliveryFee'] as num).toDouble(),
@@ -119,6 +127,7 @@ class ProductModel extends Equatable {
   Map<String, dynamic> toFirestore() {
     return {
       'name': name,
+      'searchName': searchName,
       'description': description,
       'price': price,
       'deliveryFee': deliveryFee,
@@ -169,6 +178,7 @@ class ProductModel extends Equatable {
     return ProductModel(
       id: entity.id,
       name: entity.name,
+      searchName: entity.name.trim().toLowerCase(),
       description: entity.description,
       price: entity.price,
       deliveryFee: entity.deliveryFee,
@@ -192,6 +202,7 @@ class ProductModel extends Equatable {
   List<Object?> get props => [
     id,
     name,
+    searchName,
     description,
     price,
     deliveryFee,

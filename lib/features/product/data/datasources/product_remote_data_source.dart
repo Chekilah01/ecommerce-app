@@ -63,4 +63,37 @@ class ProductRemoteDataSource {
   Future<void> deleteProduct(String productId) async {
     await _productsCollection.doc(productId).delete();
   }
+
+  Future<List<ProductModel>> searchProducts({
+  String query = '',
+  String categoryId = 'all',
+}) async {
+  final normalizedQuery = query.trim().toLowerCase();
+  final normalizedCategory = categoryId.trim().toLowerCase();
+
+  Query<Map<String, dynamic>> queryRef = _productsCollection;
+
+  if (normalizedCategory != 'all') {
+    queryRef = queryRef.where(
+      'categoryId',
+      isEqualTo: normalizedCategory,
+    );
+  }
+
+  if (normalizedQuery.isNotEmpty) {
+    queryRef = queryRef
+        .where(
+          'searchName',
+          isGreaterThanOrEqualTo: normalizedQuery,
+        )
+        .where(
+          'searchName',
+          isLessThan: '$normalizedQuery\uf8ff',
+        );
+  }
+
+  final snapshot = await queryRef.get();
+
+  return snapshot.docs.map(ProductModel.fromFirestore).toList();
+}
 }
