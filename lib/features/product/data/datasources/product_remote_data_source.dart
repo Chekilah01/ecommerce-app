@@ -92,7 +92,9 @@ class ProductRemoteDataSource {
         );
   }
 
-  final snapshot = await queryRef.get();
+  final snapshot = await queryRef
+  .get()
+  .timeout(const Duration(seconds: 10));
 
   return snapshot.docs.map(ProductModel.fromFirestore).toList();
 }

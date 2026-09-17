@@ -207,10 +207,14 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         ),
       );
     } catch (e) {
+      final errorMessage = e is TimeoutException
+          ? 'Unable to load products. Please check your internet connection and try again.'
+          : e.toString();
+
       emit(
         state.copyWith(
           status: ProductStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: errorMessage,
           clearSuccessMessage: true,
         ),
       );
